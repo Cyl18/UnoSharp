@@ -51,7 +51,7 @@ namespace UnoSharp
         }
 
         public bool Uno { get; internal set; }
-
+        public bool PublicCard { get; internal set; }
         public DateTime LastSendTime { get; internal set; }
 
         public string ToAtCode()

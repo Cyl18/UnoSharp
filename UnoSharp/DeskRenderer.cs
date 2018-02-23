@@ -45,7 +45,7 @@ namespace UnoSharp
         {
             // init
             var font = new Font("Microsoft YaHei", 52);
-            var blankCards = players.Select(player => RenderBlankCards(player.Cards.Count));
+            var blankCards = players.Select(player => player.PublicCard ? player.Cards.ToImage() : RenderBlankCards(player.Cards.Count));
             var enumerable = blankCards.ToArray();
 
             // text

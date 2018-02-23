@@ -17,6 +17,13 @@ namespace UnoSharp.GameStep
             if (!IsValidPlayer(desk, player))
                 return;
 
+            switch (command)
+            {
+                case "明牌":
+                    player.PublicCard = true;
+                    return;
+            }
+
             // uno draw
             switch (command)
             {
@@ -109,6 +116,7 @@ namespace UnoSharp.GameStep
                 if (valid) // doubt is valid
                 {
                     desk.FinishDraw(_firstSubmitDrawFourPlayer);
+                    desk.SendLastCardMessage();
                 }
                 else
                 {
