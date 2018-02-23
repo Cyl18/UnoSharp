@@ -10,19 +10,33 @@ namespace UnoSharp.GameStep
     {
         public override void Parse(Desk desk, Player player, string command)
         {
+            switch (command)
+            {
+                case "上一张牌":
+                case "全场信息":
+                    desk.SendLastCardMessage();
+                    return;
+            }
             if (!desk.Players.Contains(player))
                 return;
             if (ParseUnoCommand(desk, player, command))
                 return;
-            if (!IsValidPlayer(desk, player))
-                return;
-
             switch (command)
             {
                 case "明牌":
                     player.PublicCard = true;
+                    desk.AddMessage("明牌成功.");
+                    return;
+                case "我的回合":
+                case "我的回合!":
+                case "我的回合！":
+                    desk.AddMessage("是是, 我们都知道是你的回合");
                     return;
             }
+
+            if (!IsValidPlayer(desk, player))
+                return;
+
 
             // uno draw
             switch (command)
@@ -32,6 +46,8 @@ namespace UnoSharp.GameStep
                 case "mo":
                 case "draw":
                 case "画画":
+                case "抽卡！": //为了84！
+                case "抽卡":
                     switch (desk.State)
                     {
                         case GamingState.Gaming:
@@ -111,12 +127,17 @@ namespace UnoSharp.GameStep
         {
             if (doubt)
             {
+                if (desk.LastNonDrawFourCard == null)
+                {
+                    desk.AddMessage("无法质疑: 没有上一张牌.");
+                    desk.FinishDraw(player);
+                    return;
+                }
                 var valid = _firstSubmitDrawFourPlayer.Cards.ContainsColor(desk.LastNonDrawFourCard.Color) ||
                             _firstSubmitDrawFourPlayer.Cards.ContainsValue(desk.LastNonDrawFourCard.Value);
                 if (valid) // doubt is valid
                 {
                     desk.FinishDraw(_firstSubmitDrawFourPlayer);
-                    desk.SendLastCardMessage();
                 }
                 else
                 {

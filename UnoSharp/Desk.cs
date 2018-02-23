@@ -85,6 +85,7 @@ namespace UnoSharp
                 var player = PlayerList[index];
                 player.AddCardsAndSort(7);
                 player.Index = index;
+                AddMessageLine(player.AtCode);
             }
 
             this.SendLastCardMessage();
@@ -107,7 +108,9 @@ namespace UnoSharp
 
         public void FinishGame(Player player)
         {
-            AddMessage($"{CurrentPlayer.AtCode}赢了!");
+            AddMessageLine($"{CurrentPlayer.AtCode}赢了!");
+            PlayerList.ForEach(p => p.PublicCard = true);
+            AddMessage(this.RenderDesk().ToImageCode());
             Task.Run(() =>
             {
                 Thread.Sleep(500);
@@ -117,8 +120,11 @@ namespace UnoSharp
 
         public void SendLastCardMessage()
         {
-            AddMessageLine($"{this.RenderDesk().ToImageCode()}");
-            AddMessage($"请{CurrentPlayer.AtCode}出牌.");
+            if (!Message.EndsWith("出牌"))
+            {
+                AddMessageLine($"{this.RenderDesk().ToImageCode()}");
+                AddMessage($"请{CurrentPlayer.AtCode}出牌.");
+            }
         }
 
         public void ParseMessage(string playerid, string message)
@@ -134,12 +140,15 @@ namespace UnoSharp
             }
             
         }
-        //BUG  after doubt boardcast cards
-        //TODO last card
-        //TODO start who is p
-        //TODO end public card
-        //TODO current player
+        //√BUG  after doubt boardcast cards
+        //√BUG  doubt crash
+        //√TODO public card anyone can use
+        //√TODO last card
+        //√TODO start who is p
+        //√TODO end public card
+        //√TODO current player
         //TODO special card
+        //√TODO public card notify
         //TODO config and set nick
         //TODO auto submit card
         //TODO time limit
@@ -153,6 +162,7 @@ namespace UnoSharp
                 player.AddCardsAndSort(OverlayCardNum);
                 OverlayCardNum = 0;
                 _currentParser.MoveNext(this);
+                SendLastCardMessage();
             }
         }
     }

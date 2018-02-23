@@ -41,11 +41,12 @@ namespace UnoSharp
                 case GamingState.Doubting:
                     return Rng.Next(8) > 5 ? "质疑" : "不质疑";
             }
+            throw new NotImplementedException();
         }
 
         public static Card ExtractCard(List<Card> cards, Card lastCard)
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace UnoSharp
 
         public static Image ToImage(this ICollection<Card> cards)
         {
-            if (cards.Count == 0) throw new IndexOutOfRangeException();
+            if (cards.Count == 0) return new Bitmap(1, 1);
             if (cards.Count == 1) return cards.First().ToImage();
             var cardlist = cards.ToArray();
             var images = cards.Select(card => card.ToImage()).ToList();

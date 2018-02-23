@@ -60,7 +60,7 @@ namespace UnoSharp
             var blankCardPoint = new Point(beforeRenderBlankCardWidth, 0);
 
             // main image
-            var eachHeight = GetEachLength(baseHeight);
+            var eachHeight = Math.Max(GetEachLength(baseHeight), 100); // prevent zero
             var height = GetLength(baseHeight, eachHeight, players.Count);
             var width = beforeRenderBlankCardWidth + maxWidth;
 
