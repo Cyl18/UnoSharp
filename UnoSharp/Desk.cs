@@ -47,7 +47,7 @@ namespace UnoSharp
             
             _playersDictionary.Add(player.PlayerId, player);
             AddMessageLine($"加入成功: {player.ToAtCode()}");
-            AddMessage($"当前玩家有: {string.Join(", ", Players.Select(p => p.ToAtCode()))}");
+            AddMessage($"UNO当前玩家有: {string.Join(", ", Players.Select(p => p.ToAtCode()))}");
             return true;
         }
 
@@ -55,7 +55,7 @@ namespace UnoSharp
         {
             AddMessageLine($"移除成功: {player.ToAtCode()}");
             _playersDictionary.Remove(player.PlayerId);
-            AddMessage($"当前玩家有: {string.Join(", ", Players.Select(p => p.ToAtCode()))}");
+            AddMessage($"UNO当前玩家有: {string.Join(", ", Players.Select(p => p.ToAtCode()))}");
         }
 
         public Player GetPlayer(string playerid)
