@@ -25,6 +25,26 @@ namespace UnoSharp
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, "Unknown state!");
             }
+        }
+        private static readonly Random Rng = new Random("11223344sblg".GetHashCode());
+
+
+        public static string ExtractCommand(List<Card> cards, Card lastCard, GamingState state)
+        {
+            switch (state)
+            {
+                case GamingState.Gaming:
+                case GamingState.WaitingDrawTwoOverlay:
+                case GamingState.WaitingDrawFourOverlay:
+                    var card = ExtractCard(cards, lastCard);
+                    return card == null ? "draw" : card.ToShortString();
+                case GamingState.Doubting:
+                    return Rng.Next(8) > 5 ? "质疑" : "不质疑";
+            }
+        }
+
+        public static Card ExtractCard(List<Card> cards, Card lastCard)
+        {
             
         }
     }

@@ -134,7 +134,15 @@ namespace UnoSharp
             }
             
         }
-
+        //BUG  after doubt boardcast cards
+        //TODO last card
+        //TODO start who is p
+        //TODO end public card
+        //TODO current player
+        //TODO special card
+        //TODO config and set nick
+        //TODO auto submit card
+        //TODO time limit
         public void FinishDraw(Player player)
         {
             if (State  == GamingState.WaitingDrawFourOverlay || State == GamingState.WaitingDrawTwoOverlay || State == GamingState.Doubting)
