@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,27 +16,54 @@ namespace UnoSharp
     {
         private Dictionary<string, Player> _playersDictionary = new Dictionary<string, Player>();
         private readonly Timer _timer = new Timer(10*1000);
-        
-        public Card LastCard { get; set; } //TODO SET
-        private GameStepBase _currentParser;
+
+        public Card LastCard
+        {
+            get => _lastCard;
+            set
+            {
+                if (value.Color == CardColor.Special)
+                    return;
+                
+                _lastCard = value;
+            }
+        } //TODO SET
+
+        public Card LastNonDrawFourCard
+        {
+            get => _lastNonDrawFourCard;
+            internal set
+            {
+                if (value.Color == CardColor.Special)
+                    return;
+                
+                _lastNonDrawFourCard = value;
+            }
+        }
+
+        internal GameStepBase CurrentParser;
         public GamingState State { get; internal set; }
+
 
         public Desk(string deskId)
         {
             DeskId = deskId;
-            _currentParser = new WaitingParser();
+            CurrentParser = new WaitingParser();
         }
+
         private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>();
 
         public IEnumerable<Player> Players => _playersDictionary.Values;
         public List<Player> PlayerList => Players.ToList();
         public string DeskId { get; }
-        public Player CurrentPlayer => PlayerList[_currentParser.CurrentIndex];
+        public Player CurrentPlayer => PlayerList[CurrentParser.CurrentIndex];
         public int OverlayCardNum { get; set; }
-        public bool Reversed => _currentParser.Reversed;
+        public bool Reversed => CurrentParser.Reversed;
         public Player LastSendPlayer { get; internal set; }
-        public Card LastNonDrawFourCard { get; internal set; }
-
+        private readonly ICommandParser _standardParser = new StandardParser();
+        private Card _lastNonDrawFourCard;
+        private Card _lastCard;
+        public int Step { get; internal set; }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool AddPlayer(Player player)
@@ -77,8 +105,8 @@ namespace UnoSharp
                 return;
             }
             RandomizePlayers();
-            LastCard = Card.Generate();
-            _currentParser = new GamingParser();
+            LastCard = Card.Generate(card => card.Color != CardColor.Special && card.Color != CardColor.Wild);
+            CurrentParser = new GamingParser();
 
             for (var index = 0; index < PlayerList.Count; index++)
             {
@@ -114,13 +142,13 @@ namespace UnoSharp
             Task.Run(() =>
             {
                 Thread.Sleep(500);
-                Desk.Desks.Remove(this.DeskId); 
+                Desks.Remove(this.DeskId); 
             });
         }
 
         public void SendLastCardMessage()
         {
-            if (!Message.EndsWith("出牌"))
+            if (Message?.EndsWith("出牌") != true)
             {
                 AddMessageLine($"{this.RenderDesk().ToImageCode()}");
                 AddMessage($"请{CurrentPlayer.AtCode}出牌.");
@@ -132,7 +160,8 @@ namespace UnoSharp
             try
             {
                 var player = GetPlayer(playerid);
-                _currentParser.Parse(this, player, message);
+                CurrentParser.Parse(this, player, message);
+                _standardParser.Parse(this, player, message);
             }
             catch (Exception e)
             {
@@ -147,11 +176,13 @@ namespace UnoSharp
         //√TODO start who is p
         //√TODO end public card
         //√TODO current player
-        //TODO special card
         //√TODO public card notify
+        //√TODO auto submit card
         //TODO config and set nick
-        //TODO auto submit card
+        //√TODO special card
+        //TODO bot name
         //TODO time limit
+        //TODO continue game
         public void FinishDraw(Player player)
         {
             if (State  == GamingState.WaitingDrawFourOverlay || State == GamingState.WaitingDrawTwoOverlay || State == GamingState.Doubting)
@@ -161,10 +192,11 @@ namespace UnoSharp
 
                 player.AddCardsAndSort(OverlayCardNum);
                 OverlayCardNum = 0;
-                _currentParser.MoveNext(this);
+                CurrentParser.MoveNext(this);
                 SendLastCardMessage();
             }
         }
+        
     }
 
     public enum GamingState

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnoSharp.GameComponent;
 
 namespace UnoSharp
 {
@@ -21,18 +22,56 @@ namespace UnoSharp
         private static readonly Color Green = System.Drawing.Color.FromArgb(0x4C, 0xAF, 0x50);
         private static readonly Color Red = System.Drawing.Color.FromArgb(0xF4, 0x43, 0x36);
         private static readonly Color Wild = System.Drawing.Color.FromArgb(163, 154, 141);
+        
 
-        public CardColor Color { get; }
-        public Color DrawColor { get; }
+        public CardColor Color { get; internal set; }
+        public Color DrawColor { get; internal set; }
         public CardValue Value { get; }
         public CardType Type { get; }
         public int ValueNumber => (int) Value;
+
+        public static SpecialCard[] SpecialCards = 
+        {
+            new Card84(), 
+            new CardA125(), 
+            new CardCJ(), 
+            new CardLG(), 
+            new CardShp(), 
+            new CardCY(),
+            new CardToma(), 
+            new CardMetel()
+        };
+
         public static Card[] CardsPool { get; } = GenerateDefaultCards();
+
+        public static Queue<Card> CardsQueue { get; } = new Queue<Card>();
+
         public static Image MainCardImage { get; } = GetMainCard();
+        public static Image GoldenCardImage { get; } = GetGoldenCard();
+
+        
 
         public static Card Generate()
         {
-            return CardsPool.PickOne();
+            return CardsQueue.Any() ? CardsQueue.Dequeue() : CardsPool.PickOne();
+        }
+
+        public static Card Generate(Predicate<Card> predicate)
+        {
+            while (true)
+            {
+                var card = CardsPool.PickOne();
+                if (predicate(card))
+                    return card;
+            }
+        }
+
+        public static IEnumerable<Card> Generate(Predicate<Card> predicate, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                yield return Generate(predicate);
+            }
         }
 
         public static IEnumerable<Card> Generate(int num)
@@ -59,6 +98,13 @@ namespace UnoSharp
                 }
             }
 
+            foreach (var card in SpecialCards)
+            {
+                for (var i = 0; i < card.Chance; i++)
+                {
+                    list.Add(card);
+                }
+            }
             return list.ToArray();
         }
 
@@ -67,9 +113,9 @@ namespace UnoSharp
             switch (value)
             {
                 case CardValue.Zero:
-                    return 1;
-                default: // non zero number
                     return 2;
+                default: // non zero number
+                    return 4;
             }
         }
 
@@ -81,6 +127,8 @@ namespace UnoSharp
                 case CardValue.Wild:
                     yield return CardColor.Wild;
                     yield return CardColor.Wild;
+                    break;
+                case CardValue.Special:
                     break;
                 default:
                     yield return CardColor.Red;
@@ -100,6 +148,7 @@ namespace UnoSharp
                 case CardValue.DrawTwo: return CardType.DrawTwo;
                 case CardValue.DrawFour: return CardType.DrawFour;
                 case CardValue.Wild: return CardType.Wild;
+                case CardValue.Special: return CardType.Special;
                 default: return CardType.Number;
             }
         }
@@ -118,6 +167,7 @@ namespace UnoSharp
                 case CardColor.Blue:
                     return Blue;
                 case CardColor.Wild:
+                case CardColor.Special:
                     return Wild;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(color), color, null);
@@ -152,14 +202,6 @@ namespace UnoSharp
                    Value == other.Value;
         }
 
-        public override int GetHashCode()
-        {
-            var hashCode = -1984162526; // gen by Reshaper
-            hashCode = hashCode * -1521134295 + Color.GetHashCode();
-            hashCode = hashCode * -1521134295 + Value.GetHashCode();
-            return hashCode;
-        }
-
         public static bool operator ==(Card card1, Card card2)
         {
             return EqualityComparer<Card>.Default.Equals(card1, card2);
@@ -179,6 +221,20 @@ namespace UnoSharp
         {
             var path = $"UnoSharp.Resources.Cards.MainCard.png";
             var content = EmbedResourceReader.GetStream(path);
+            return new Bitmap(content);
+        }
+        private static Image GetGoldenCard()
+        {
+            var path = $"UnoSharp.Resources.Cards.GoldenCard.png";
+            var content = EmbedResourceReader.GetStream(path);
+            return new Bitmap(content);
+        }
+
+        public virtual Bitmap ToImage()
+        {
+            var path = $"UnoSharp.Resources.Cards.{this.Color}.{this.Value}.png";
+            var content = EmbedResourceReader.GetStream(path);
+            if (content == null) return (Bitmap)Card.GoldenCardImage;
             return new Bitmap(content);
         }
     }
@@ -204,6 +260,8 @@ namespace UnoSharp
                 case CardColor.Blue:
                     sb.Append("B");
                     break;
+                case CardColor.Special:
+                    return ((ISpecialCard) card).ShortName;
             }
             switch (card.Type)
             {
@@ -270,6 +328,14 @@ namespace UnoSharp
                             return true;
                         }
                         continue;
+                    case CardType.Special: // 假装不知道如何重写运算符
+                        if (!(playerCard is ISpecialCard)) continue;
+                        if (((ISpecialCard)card).ShortName == ((ISpecialCard)playerCard).ShortName)
+                        {
+                            player.Cards.RemoveAt(index);
+                            return true;
+                        }
+                        continue;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -286,7 +352,9 @@ namespace UnoSharp
         Green,
         Blue,
 
-        Wild
+        Wild,
+
+        Special
     }
 
     public enum CardValue
@@ -308,7 +376,9 @@ namespace UnoSharp
         DrawTwo,
 
         Wild,
-        DrawFour
+        DrawFour,
+
+        Special
     }
 
     public enum CardType
@@ -320,6 +390,8 @@ namespace UnoSharp
         DrawTwo,
 
         Wild,
-        DrawFour
+        DrawFour,
+
+        Special
     }
 }

@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -42,23 +45,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Card.cs" />
-    <Compile Include="Desk.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="GameComponent\Card.cs" />
+    <Compile Include="GameComponent\Desk.cs" />
     <Compile Include="DeskRenderer.cs" />
     <Compile Include="EmbedResourceReader.cs" />
+    <Compile Include="GameComponent\ISpecialCard.cs" />
+    <Compile Include="GameComponent\SpecialCard.cs" />
+    <Compile Include="GameComponent\SpecialCards.cs" />
     <Compile Include="GameStep\GameStepBase.cs" />
     <Compile Include="GameStep\GamingParser.cs" />
     <Compile Include="GameStep\ICommandParser.cs" />
     <Compile Include="GameComponent\IMessageSender.cs" />
     <Compile Include="GameComponent\MessageSenderBase.cs" />
     <Compile Include="GameStep\Samsara.cs" />
+    <Compile Include="GameStep\StandardParser.cs" />
     <Compile Include="GameStep\WaitingParser.cs" />
     <Compile Include="ImageExtensions.cs" />
+    <Compile Include="JsonExtensions.cs" />
     <Compile Include="ListExtensions.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="GameComponent\Player.cs" />
     <Compile Include="PlayerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TimerEvents\TimerEvent.cs" />
     <Compile Include="UnoRule.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,7 +139,19 @@
     <EmbeddedResource Include="Resources\Cards\Yellow\Zero.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Cards\GoldenCard.png" />
+    <EmbeddedResource Include="Resources\Cards\Special\A125.png" />
+    <EmbeddedResource Include="Resources\Cards\Special\CY.png" />
     <EmbeddedResource Include="Resources\Cards\Special\LG.png" />
+    <EmbeddedResource Include="Resources\Cards\Special\MT.png" />
+    <EmbeddedResource Include="Resources\Cards\Special\SHP.png" />
+    <EmbeddedResource Include="Resources\Cards\Special\SM.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Cards\Special\84.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

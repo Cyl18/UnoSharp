@@ -44,5 +44,18 @@ namespace UnoSharp
                 }
             }
         }
+
+        public static void EachToNext<T>(this List<T> list)
+        {
+            var last = list.Last();
+            var slist = new List<T>(list);
+            for (var i = 0; i < list.Count - 1; i++)
+            {
+                var item = slist[i];
+                list[i + 1] = item;
+            }
+
+            list[0] = last;
+        }
     }
 }
