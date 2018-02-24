@@ -30,7 +30,7 @@ namespace UnoSharp
         public CardType Type { get; }
         public int ValueNumber => (int) Value;
 
-        public static SpecialCard[] SpecialCards = 
+        public static readonly SpecialCard[] SpecialCards = 
         {
             new Card84(), 
             new CardA125(), 
@@ -39,7 +39,10 @@ namespace UnoSharp
             new CardShp(), 
             new CardCY(),
             new CardToma(), 
-            new CardMetel()
+            new CardMetel(),
+            new CardShiyu(),
+            new CardJ10(), 
+            new CardXaro()
         };
 
         public static Card[] CardsPool { get; } = GenerateDefaultCards();

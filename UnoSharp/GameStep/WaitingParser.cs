@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnoSharp.GameComponent;
 
 namespace UnoSharp.GameStep
 {
@@ -18,11 +19,27 @@ namespace UnoSharp.GameStep
                 case "离开UNO":
                     desk.RemovePlayer(player);
                     break;
+                case "添加机器人":
+                    desk.AddMessage("请使用 添加机器人 [昵称]");
+                    break;
                 case "开始UNO":
                     desk.StartGame();
                     break;
             }
 
+            if (command.StartsWith("添加机器人 "))
+            {
+                var nick = command.Substring(6);
+                desk.AddPlayer(new FakePlayer(nick, desk));
+            }
+
+            if (command.StartsWith("移除机器人 "))
+            {
+                var nick = command.Substring(6);
+                var players = desk.PlayerList.OfType<FakePlayer>().Where(p => p.Nick == nick).ToArray();
+                if (players.Length == 0) return;
+                desk.RemovePlayer(players.First());
+            }
         }
     }
 }

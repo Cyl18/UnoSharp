@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnoSharp.GameComponent;
 using UnoSharp.GameStep;
+using UnoSharp.TimerEvents;
 using Timer = System.Timers.Timer;
 
 namespace UnoSharp
@@ -15,7 +16,8 @@ namespace UnoSharp
     public class Desk : MessageSenderBase
     {
         private Dictionary<string, Player> _playersDictionary = new Dictionary<string, Player>();
-        private readonly Timer _timer = new Timer(10*1000);
+        private readonly Timer _timer = new Timer(1000);
+        public List<TimerEvent> Events { get; } = new List<TimerEvent>();
 
         public Card LastCard
         {
@@ -24,7 +26,7 @@ namespace UnoSharp
             {
                 if (value.Color == CardColor.Special)
                     return;
-                
+
                 _lastCard = value;
             }
         } //TODO SET
@@ -36,7 +38,7 @@ namespace UnoSharp
             {
                 if (value.Color == CardColor.Special)
                     return;
-                
+
                 _lastNonDrawFourCard = value;
             }
         }
@@ -49,6 +51,27 @@ namespace UnoSharp
         {
             DeskId = deskId;
             CurrentParser = new WaitingParser();
+            _timer.Elapsed += Elapsed;
+            _timer.Start();
+        }
+
+        private void Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            var removes = new List<TimerEvent>();
+            foreach (var timerEvent in Events)
+            {
+                timerEvent.Seconds--;
+                if (timerEvent.Seconds == 0 && (timerEvent.Step == Step || timerEvent.Step == -1))
+                {
+                    removes.Add(timerEvent);
+                    timerEvent.Action?.Invoke();
+                }
+            }
+
+            foreach (var timerEvent in removes)
+            {
+                Events.Remove(timerEvent);
+            }
         }
 
         private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>();
@@ -68,11 +91,12 @@ namespace UnoSharp
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool AddPlayer(Player player)
         {
-            if (Players.Contains(player)) {
+            if (Players.Contains(player))
+            {
                 AddMessage($"已经加入: {player.ToAtCode()}");
                 return false;
             }
-            
+
             _playersDictionary.Add(player.PlayerId, player);
             AddMessageLine($"加入成功: {player.ToAtCode()}");
             AddMessage($"UNO当前玩家有: {string.Join(", ", Players.Select(p => p.ToAtCode()))}");
@@ -100,7 +124,8 @@ namespace UnoSharp
 
         public void StartGame()
         {
-            if (Players.Count() < 2) {
+            if (Players.Count() < 2)
+            {
                 AddMessage("喂伙计, 玩家人数不够!");
                 return;
             }
@@ -117,6 +142,10 @@ namespace UnoSharp
             }
 
             this.SendLastCardMessage();
+            if (CurrentPlayer is FakePlayer)
+            {
+                Events.Add(new TimerEvent(() => { Samsara.DoAutoSubmitCard(this); }, 2, Step));
+            }
         }
 
         public static Desk GetOrCreateDesk(string deskid)
@@ -142,7 +171,7 @@ namespace UnoSharp
             Task.Run(() =>
             {
                 Thread.Sleep(500);
-                Desks.Remove(this.DeskId); 
+                Desks.Remove(this.DeskId);
             });
         }
 
@@ -167,7 +196,7 @@ namespace UnoSharp
             {
                 AddMessage($"抱歉我们在处理你的命令时发生了错误{e}");
             }
-            
+
         }
         //√BUG  after doubt boardcast cards
         //√BUG  doubt crash
@@ -178,14 +207,18 @@ namespace UnoSharp
         //√TODO current player
         //√TODO public card notify
         //√TODO auto submit card
-        //TODO config and set nick
+        //√TODO config and set nick
         //√TODO special card
-        //TODO bot name
-        //TODO time limit
+        //√TODO bot name
+        //√TODO Java10
+        //√TODO time limit
+        //TODO draw until success
+        //TODO after draw
+        //TODO follow
         //TODO continue game
         public void FinishDraw(Player player)
         {
-            if (State  == GamingState.WaitingDrawFourOverlay || State == GamingState.WaitingDrawTwoOverlay || State == GamingState.Doubting)
+            if (State == GamingState.WaitingDrawFourOverlay || State == GamingState.WaitingDrawTwoOverlay || State == GamingState.Doubting)
             {
                 State = GamingState.Gaming;
                 AddMessage($"{player.AtCode}被加牌{OverlayCardNum}张.");
@@ -196,7 +229,7 @@ namespace UnoSharp
                 SendLastCardMessage();
             }
         }
-        
+
     }
 
     public enum GamingState

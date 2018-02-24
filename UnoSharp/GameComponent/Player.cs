@@ -19,7 +19,8 @@ namespace UnoSharp
         public Desk Desk { get; }
         public int Index { get; internal set; }
         public string Tag => $"P{Index+1}";
-        public string AtCode => $"{Nick}-{ToAtCode()}";
+        public virtual string AtCode => $"{Nick}-{ToAtCode()}";
+        public virtual bool AutoSubmitCard { get; internal set; }
         public List<Card> Cards { get; internal set; } = new List<Card>();
 
         public bool Equals(Player other)
@@ -70,7 +71,7 @@ namespace UnoSharp
             }
         }
 
-        public string ToAtCode()
+        public virtual string ToAtCode()
         {
 #if !DEBUG
             return $"[CQ:at,qq={PlayerId}]";
@@ -94,6 +95,18 @@ namespace UnoSharp
             Cards.AddRange(cards);
             Cards.Sort();
             if (Uno) Uno = false;
+            SendCardsMessage();
+        }
+        public void AddCardAndSort(Card card)
+        {
+            if (card is ISpecialCard sp)
+            {
+                AddMessageLine($"{sp.ShortName}: {sp.Description}");
+            }
+            Cards.Add(card);
+            Cards.Sort();
+            if (Uno)
+                Uno = false;
             SendCardsMessage();
         }
 

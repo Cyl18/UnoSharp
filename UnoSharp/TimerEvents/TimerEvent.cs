@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace UnoSharp.TimerEvents
 {
-    class TimerEvent
+    public class TimerEvent
     {
+        public Action Action { get; }
+        public int Seconds { get; internal set; }
+        public int Step { get; }
+
+        public TimerEvent(Action action, int seconds, int step)
+        {
+            Action = action;
+            Seconds = seconds;
+            Step = step;
+        }
     }
 }

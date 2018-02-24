@@ -102,7 +102,7 @@ namespace UnoSharp
 
                     grap.RenderImageWithShadow(blankCard, blankCardPoint, 5, Opacity);
                     textPoint.X = margin + textCenterWidth - TextRenderer.MeasureText(player.Nick, font).Width / 2;
-                    TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : Color.Gray);
+                    TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : (player.AutoSubmitCard ? Color.BlueViolet : Color.Gray));
                     if (player.IsCurrentPlayer())
                     {
                         DrawTextRect(grap, player.Nick, font, textPoint);

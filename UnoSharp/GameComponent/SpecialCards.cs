@@ -66,16 +66,16 @@ namespace UnoSharp.GameComponent
 
     public class CardCJ : SpecialCard
     {
-        public override string Description { get; } = "将场上所有人的牌数量扣或加到7";
+        public override string Description { get; } = "将场上所有人的牌数量扣或加到4";
         public override string ShortName { get; } = "CJ";
-        public override int Chance { get; } = 3;
+        public override int Chance { get; } = 1;
 
         public override void Behave(Desk desk)
         {
             foreach (var player in desk.Players)
             {
                 var count = player.Cards.Count;
-                var px = count - 7;
+                var px = count - 4;
                 if (px > 0)
                 {
                     for (var i = 0; i < px; i++)
@@ -157,9 +157,43 @@ namespace UnoSharp.GameComponent
         public override int Chance { get; } = 3;
         public override void Behave(Desk desk)
         {
-            desk.PlayerList.ForEach(player => player.Cards.RemoveAll(card => card.Type != CardType.Number));
+            desk.PlayerList.ForEach(player => player.Cards.RemoveAll(card => card.Type != CardType.Number && card.Type != CardType.Special));
             desk.PlayerList.ForEach(player => player.SendCardsMessage());
         }
     }
-
+    public class CardShiyu : SpecialCard
+    {
+        public override string Description { get; } = "弃掉一张牌然后罚摸两张";
+        public override string ShortName { get; } = "902";
+        public override int Chance { get; } = 4;
+        public override void Behave(Desk desk)
+        {
+            var cards = desk.CurrentParser.Previous(desk).Cards;
+            cards.Remove(cards.PickOne());
+            desk.CurrentParser.Previous(desk).AddCardsAndSort(2);
+        }
+    }
+    public class CardJ10 : SpecialCard
+    {
+        public override string Description { get; } = "出牌后罚摸一张牌";
+        public override string ShortName { get; } = "J10";
+        public override int Chance { get; } = 6;
+        public override void Behave(Desk desk)
+        {
+            desk.CurrentParser.Previous(desk).AddCardsAndSort(1);
+        }
+    }
+    public class CardXaro : SpecialCard
+    {
+        public override string Description { get; } = "随机一个人的一张牌转移到自己手中";
+        public override string ShortName { get; } = "XARO";
+        public override int Chance { get; } = 3;
+        public override void Behave(Desk desk)
+        {
+            var c = desk.PlayerList.PickOne().Cards;
+            var card = c.PickOne();
+            c.Remove(card);
+            desk.CurrentParser.Previous(desk).AddCardAndSort(card);
+        }
+    }
 }

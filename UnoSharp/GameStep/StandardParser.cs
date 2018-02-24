@@ -13,6 +13,11 @@ namespace UnoSharp.GameStep
             if (command.StartsWith("设置昵称 "))
             {
                 var nick = command.Substring("设置昵称 ".Length);
+                if (nick.Length>20)
+                {
+                    desk.AddMessage("不要设置 太长的昵称 请。");
+                    return;
+                }
                 var config = Config.Get();
                 config.Nicks[player.PlayerId] = nick;
                 config.Save();

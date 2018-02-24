@@ -33,6 +33,14 @@ namespace UnoSharp.GameStep
                 case "我的回合！":
                     desk.AddMessage("是是, 我们都知道是你的回合");
                     return;
+                case "启用托管":
+                    desk.AddMessage("完成.");
+                    player.AutoSubmitCard = true;
+                    return;
+                case "关闭托管":
+                    desk.AddMessage("完成.");
+                    player.AutoSubmitCard = false;
+                    return;
             }
 
             if (!IsValidPlayer(desk, player))

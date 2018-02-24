@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using UnoSharp.GameComponent;
+using UnoSharp.TimerEvents;
 
 namespace UnoSharp.GameStep
 {
@@ -18,7 +21,7 @@ namespace UnoSharp.GameStep
             return desk.Players.ToList().FindIndex(p => p == player) == CurrentIndex;
         }
 
-        
+
 
         public void Reverse()
         {
@@ -27,6 +30,7 @@ namespace UnoSharp.GameStep
 
         internal virtual void MoveNext(Desk desk)
         {
+            desk.Step++;
             if (Reversed)
             {
                 CurrentIndex--;
@@ -39,6 +43,33 @@ namespace UnoSharp.GameStep
             {
                 CurrentIndex = (CurrentIndex + 1) % desk.Players.Count();
             }
+
+            if (desk.CurrentPlayer.AutoSubmitCard)
+            {
+                desk.Events.Add(new TimerEvent(() => { DoAutoSubmitCard(desk); }, 5, desk.Step));
+            }
+            desk.Events.Add(new TimerEvent(() => { desk.AddMessage($"{desk.CurrentPlayer.AtCode}你只剩10s时间出牌啦!"); }, 15, desk.Step));
+            desk.Events.Add(new TimerEvent(() =>
+            {
+                desk.CurrentPlayer.AutoSubmitCard = true;
+                desk.AddMessage($"{desk.CurrentPlayer.AtCode}出牌超时");
+                DoAutoSubmitCard(desk);
+            }, 25, desk.Step));
+
+        }
+
+        public static void DoAutoSubmitCard(Desk desk)
+        {
+            var validstr = UnoRule.ExtractCommand(desk.CurrentPlayer.Cards, desk.LastCard, desk.State);
+            desk.AddMessage($"{(desk.CurrentPlayer is FakePlayer ? "机器人" : "托管玩家")}命令: {validstr}");
+            Thread.Sleep(100);
+            var cp = desk.CurrentPlayer.PlayerId;
+            if (desk.CurrentPlayer.Cards.Count == 2)
+            {
+                desk.Events.Add(new TimerEvent(() => desk.ParseMessage(cp, "uno"), 1, -1));
+            }
+            desk.ParseMessage(desk.CurrentPlayer.PlayerId, validstr);
+            
         }
 
         public Player Next(Desk desk)
@@ -60,6 +91,6 @@ namespace UnoSharp.GameStep
             CurrentIndex = current;
             return cp;
         }
-    
-}
+
+    }
 }
