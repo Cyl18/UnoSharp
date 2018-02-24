@@ -49,7 +49,7 @@ namespace UnoSharp
 
                 for (var i = 0; i < goldenCards; i++)
                 {
-                    grap.RenderImageWithShadow(Card.MainCardImage, point, 5, Opacity);
+                    grap.RenderImageWithShadow(Card.GoldenCardImage, point, 5, Opacity);
                     point.X += eachWidth;
                 }
             }
