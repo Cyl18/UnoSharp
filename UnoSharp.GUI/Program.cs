@@ -13,7 +13,12 @@ namespace UnoSharp.GUI
         {
             var s = string.Join(", ", Card.CardsPool.Select(card => card.ToString()));
             Console.WriteLine(s);
-            //DeskRenderer.RenderDesk(desk).Save("test5.png");
+            var desk = new Desk("gg");
+            desk.AddPlayer(new Player("gg", desk));
+            desk.AddPlayer(new Player("gg2", desk));
+            desk.StartGame();
+
+            DeskRenderer.RenderDesk(desk).Save("test5.png");
         }
     }
 }
