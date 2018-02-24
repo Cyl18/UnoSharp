@@ -18,6 +18,17 @@ namespace UnoSharp.GameStep
                 config.Save();
                 desk.AddMessage("Done.");
             }
+
+            switch (command)
+            {
+                case "特殊牌功能":
+                    foreach (var specialCard in Card.SpecialCards)
+                    {
+                        desk.AddMessageLine($"{specialCard.ShortName} {specialCard.Description}");
+                        desk.AddMessageLine(specialCard.ToImage().ToImageCode());
+                    }
+                    break;
+            }
         }
     }
 }

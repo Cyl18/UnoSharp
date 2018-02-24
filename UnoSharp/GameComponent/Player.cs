@@ -54,7 +54,7 @@ namespace UnoSharp
         public bool PublicCard { get; internal set; }
         public DateTime LastSendTime { get; internal set; }
 
-        public string Nick
+        public virtual string Nick
         {
             get
             {

@@ -112,9 +112,9 @@ namespace UnoSharp.GameStep
                 desk.LastNonDrawFourCard = card;
             }
 
-            if (player.Cards.Count == 0)
+            foreach (var deskPlayer in desk.Players.Where(deskPlayer => deskPlayer.Cards.Count == 0))
             {
-                desk.FinishGame(player);
+                desk.FinishGame(deskPlayer);
                 return;
             }
 

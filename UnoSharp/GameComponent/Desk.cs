@@ -148,7 +148,7 @@ namespace UnoSharp
 
         public void SendLastCardMessage()
         {
-            if (Message?.EndsWith("出牌") != true)
+            if (Message?.EndsWith("出牌.") != true)
             {
                 AddMessageLine($"{this.RenderDesk().ToImageCode()}");
                 AddMessage($"请{CurrentPlayer.AtCode}出牌.");
