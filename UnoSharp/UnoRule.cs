@@ -34,7 +34,20 @@ namespace UnoSharp
         }
         private static readonly Random Rng = new Random("YuukiAsuna-Kantinatron-Neutron-KirigayaKazuto-Cryptoshop-Nephren Ruq Insania".GetHashCode());
 
-
+        public static bool IsValidForFollowCard(Card thisCard, Card lastCard, GamingState state)
+        {
+            switch (state)
+            {
+                case GamingState.Gaming:
+                    return thisCard.Type == CardType.Number && thisCard.Color == lastCard.Color && thisCard.Value == lastCard.Value;
+                case GamingState.WaitingDrawTwoOverlay:
+                case GamingState.WaitingDrawFourOverlay:
+                case GamingState.Doubting:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+        }
         public static string ExtractCommand(List<Card> cards, Card lastCard, GamingState state)
         {
             switch (state)

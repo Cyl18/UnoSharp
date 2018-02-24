@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnoSharp.GameComponent;
+using UnoSharp.TimerEvents;
 
 namespace UnoSharp.GameStep
 {
@@ -46,6 +47,20 @@ namespace UnoSharp.GameStep
             if (!IsValidPlayer(desk, player))
                 return;
 
+            var card = command.ToCard();
+            if (card != null && UnoRule.IsValidForFollowCard(card, desk.LastCard, desk.State))
+            {
+                if (!card.IsValidForPlayerAndRemove(player))
+                {
+                    desk.AddMessage("你的手里并没有这些牌.");
+                    return;
+                }
+                
+                After(desk, player, card);
+                CurrentIndex = desk.PlayerList.FindIndex(p => p == player);
+                MoveNext(desk);
+                desk.SendLastCardMessage();
+            }
 
             // uno draw
             switch (command)
@@ -60,8 +75,7 @@ namespace UnoSharp.GameStep
                     switch (desk.State)
                     {
                         case GamingState.Gaming:
-                            player.AddCardsAndSort(1);
-                            desk.AddMessageLine("已为你摸牌.");
+                            TimerDraw(desk, player, desk.LastCard);
                             break;
                         case GamingState.WaitingDrawTwoOverlay:
                         case GamingState.WaitingDrawFourOverlay:
@@ -95,7 +109,7 @@ namespace UnoSharp.GameStep
             }
 
             // uno submit card
-            var card = command.ToCard();
+            
             if (card == null)
             {
                 desk.AddMessage("无法匹配你想出的牌.");
@@ -114,6 +128,15 @@ namespace UnoSharp.GameStep
                 return;
             }
 
+            
+
+
+            After(desk, player, card);
+            desk.SendLastCardMessage();
+        }
+
+        private void After(Desk desk, Player player, Card card)
+        {
             desk.LastCard = card;
             if (card.Type != CardType.DrawFour)
             {
@@ -129,7 +152,26 @@ namespace UnoSharp.GameStep
             player.LastSendTime = DateTime.Now;
             desk.LastSendPlayer = player;
             Behave(desk, player, card);
-            desk.SendLastCardMessage();
+        }
+
+        private void TimerDraw(Desk desk, Player player, Card deskLastCard)
+        {
+            var genCard = Card.Generate();
+            player.AddCardAndSort(genCard);
+            if (UnoRule.IsValid(genCard, deskLastCard, desk.State))
+            {
+                desk.AddMessageLine("摸牌结束. 强制打出.");
+                desk.ParseMessage(player.PlayerId, genCard.ToShortString());
+            }
+            else
+            {
+                desk.AddMessage("没有摸到....继续摸牌");
+                desk.Events.Add(new TimerEvent(() =>
+                {
+                    TimerDraw(desk, player, deskLastCard);
+                }, 2, desk.Step));
+            }
+
         }
 
         private void FinishDoubt(Desk desk, Player player, bool doubt)
@@ -231,7 +273,7 @@ namespace UnoSharp.GameStep
                     BehaveDrawFour(nextPlayer, desk);
                     break;
                 case CardType.Special:
-                    var special = (ISpecialCard) card;
+                    var special = (ISpecialCard)card;
                     desk.AddMessage($"特殊牌: {special.ShortName}, {special.Description}!");
                     special.Behave(desk);
                     break;

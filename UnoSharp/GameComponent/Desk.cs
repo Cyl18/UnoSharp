@@ -212,10 +212,10 @@ namespace UnoSharp
         //√TODO bot name
         //√TODO Java10
         //√TODO time limit
-        //TODO draw until success
-        //TODO after draw
-        //TODO follow
-        //TODO continue game
+        //√TODO draw until success
+        //√TODO after draw
+        //√TODO follow
+        //NO TODO continue game
         public void FinishDraw(Player player)
         {
             if (State == GamingState.WaitingDrawFourOverlay || State == GamingState.WaitingDrawTwoOverlay || State == GamingState.Doubting)
