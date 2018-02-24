@@ -154,7 +154,7 @@ namespace UnoSharp.GameComponent
     {
         public override string Description { get; } = "弃掉全场功能牌";
         public override string ShortName { get; } = "MT";
-        public override int Chance { get; } = 2;
+        public override int Chance { get; } = 3;
         public override void Behave(Desk desk)
         {
             desk.PlayerList.ForEach(player => player.Cards.RemoveAll(card => card.Type != CardType.Number));
