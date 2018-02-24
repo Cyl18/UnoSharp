@@ -13,9 +13,18 @@ namespace UnoSharp
 {
     public static class DeskRenderer
     {
+        private static readonly float Opacity = 0.3f;
+        private static readonly int Padding = 20;
+
         private static int GetEachLength(int baseLength) => (int)(baseLength / 5.0 * 2.0);
         private static int GetLength(int baseLength, int eachLength, int count) =>
             baseLength + eachLength * (count - 1);
+
+        public static void RenderImageWithShadow(this Graphics graphics, Image image, Point point, int radius, float opacity)
+        {
+            graphics.DrawImage(GaussianHelper.CreateShadow(image, radius, opacity), point);
+            graphics.DrawImage(image, point);
+        }
 
         public static Image RenderBlankCards(int count, int goldenCards)
         {
@@ -28,19 +37,19 @@ namespace UnoSharp
             var eachWidth = GetEachLength(baseLength);
             var width = GetLength(baseLength, eachWidth, count);
             var point = new Point(0, 0);
-            var bitmap = new Bitmap(width, Card.MainCardImage.Height);
+            var bitmap = new Bitmap(width + Padding, Card.MainCardImage.Height + Padding); // 增加一个阴影的padding
             var grap = Graphics.FromImage(bitmap);
             using (grap)
             {
                 for (var i = 0; i < count - goldenCards; i++)
                 {
-                    grap.DrawImage(Card.MainCardImage, point);
+                    grap.RenderImageWithShadow(Card.MainCardImage, point, 5, Opacity);
                     point.X += eachWidth;
                 }
 
                 for (var i = 0; i < goldenCards; i++)
                 {
-                    grap.DrawImage(Card.GoldenCardImage, point);
+                    grap.RenderImageWithShadow(Card.MainCardImage, point, 5, Opacity);
                     point.X += eachWidth;
                 }
             }
@@ -86,7 +95,7 @@ namespace UnoSharp
                     var blankCard = enumerable[index];
                     var player = players[index];
 
-                    grap.DrawImage(blankCard, blankCardPoint);
+                    grap.RenderImageWithShadow(blankCard, blankCardPoint, 5, Opacity);
                     TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : Color.Gray);
                     if (player.IsCurrentPlayer())
                     {
@@ -154,7 +163,7 @@ namespace UnoSharp
 
             using (grap)
             {
-                grap.DrawImage(lastCard, cardPoint);
+                grap.RenderImageWithShadow(lastCard, cardPoint, 5, Opacity);
                 TextRenderer.DrawText(grap, text, font, textPoint, Color.Gray);
             }
 
@@ -174,10 +183,10 @@ namespace UnoSharp
             using (grap)
             {
                 point.Y += margin;
-                grap.DrawImage(playersImage, point);
+                grap.RenderImageWithShadow(playersImage, point, 5, Opacity);
                 point.Y += playersImage.Height;
                 point.Y += margin;
-                grap.DrawImage(lastCardImage, point);
+                grap.RenderImageWithShadow(lastCardImage, point, 5, Opacity);
                 point.Y += margin;
             }
 
