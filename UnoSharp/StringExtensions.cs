@@ -13,6 +13,9 @@ namespace UnoSharp
             CardColor? color = null;
             CardValue? value = null;
             var s = source.ToUpper();
+            foreach (var specialCard in Card.SpecialCards.Where(specialCard => s == specialCard.ShortName))
+                return specialCard;
+            
             switch (s.Length) {
                 case 2:
                     var first = s.Substring(0, s.Length - 1);

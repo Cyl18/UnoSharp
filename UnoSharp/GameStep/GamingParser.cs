@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnoSharp.GameComponent;
 
 namespace UnoSharp.GameStep
 {
@@ -45,7 +46,7 @@ namespace UnoSharp.GameStep
                 case "摸牌":
                 case "mo":
                 case "draw":
-                case "画画":
+                case "画画": // cnm 当麻
                 case "抽卡！": //为了84！
                 case "抽卡":
                     switch (desk.State)
@@ -221,6 +222,11 @@ namespace UnoSharp.GameStep
                     desk.OverlayCardNum += 4;
                     BehaveDrawFour(nextPlayer, desk);
                     break;
+                case CardType.Special:
+                    var special = (ISpecialCard) card;
+                    desk.AddMessage($"特殊牌: {special.ShortName}, {special.Description}!");
+                    special.Behave(desk);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -232,7 +238,7 @@ namespace UnoSharp.GameStep
         {
             if (nextPlayer.Cards.ContainsType(CardType.DrawFour))
             {
-                nextPlayer.AddMessage("你现在可以选择 叠加+4 或者 摸牌来让前面叠加的+2加到你身上");
+                nextPlayer.AddMessage("你现在可以选择 叠加+4 或者 摸牌来让前面叠加的+2加到你手里");
             }
             else
             {
@@ -252,7 +258,7 @@ namespace UnoSharp.GameStep
         {
             if (nextPlayer.Cards.ContainsType(CardType.DrawTwo))
             {
-                nextPlayer.AddMessage("你现在可以选择 叠加+2 或者 摸牌来让前面叠加的+2加到你身上");
+                nextPlayer.AddMessage("你现在可以选择 叠加+2 或者 摸牌来让前面叠加的+2加到你手里");
             }
             else
             {

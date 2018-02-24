@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Schema;
+using UnoSharp.GameComponent;
 
 namespace UnoSharp
 {
@@ -16,7 +17,7 @@ namespace UnoSharp
         private static int GetLength(int baseLength, int eachLength, int count) =>
             baseLength + eachLength * (count - 1);
 
-        public static Image RenderBlankCards(int count)
+        public static Image RenderBlankCards(int count, int goldenCards)
         {
             if (count == 0)
                 return new Bitmap(1, 1);
@@ -31,9 +32,15 @@ namespace UnoSharp
             var grap = Graphics.FromImage(bitmap);
             using (grap)
             {
-                for (var i = 0; i < count; i++)
+                for (var i = 0; i < count - goldenCards; i++)
                 {
                     grap.DrawImage(Card.MainCardImage, point);
+                    point.X += eachWidth;
+                }
+
+                for (var i = 0; i < goldenCards; i++)
+                {
+                    grap.DrawImage(Card.GoldenCardImage, point);
                     point.X += eachWidth;
                 }
             }
@@ -45,11 +52,17 @@ namespace UnoSharp
         {
             // init
             var font = new Font("Microsoft YaHei", 52);
-            var blankCards = players.Select(player => player.PublicCard ? player.Cards.ToImage() : RenderBlankCards(player.Cards.Count));
+            var blankCards = from player in players
+                select player.PublicCard
+                    ? player.Cards.ToImage()
+                    : RenderBlankCards(player.Cards.Count, player.Cards.Count(card => card is ISpecialCard));
             var enumerable = blankCards.ToArray();
+            var nicks = players.Select(player => player.Nick);
 
             // text
-            var textWidth = TextRenderer.MeasureText("P0", font).Width;
+            var longest = nicks.Max(nick => nick.Length);
+            
+            var textWidth = TextRenderer.MeasureText(new string('C', longest), font).Width;
             const int margin = 120;
             var beforeRenderBlankCardWidth = margin + textWidth + margin;
             var textPoint = new Point(margin, 32);
@@ -74,7 +87,7 @@ namespace UnoSharp
                     var player = players[index];
 
                     grap.DrawImage(blankCard, blankCardPoint);
-                    TextRenderer.DrawText(grap, player.Tag, font, textPoint, player.Uno ? Color.Red : Color.Gray);
+                    TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : Color.Gray);
                     if (player.IsCurrentPlayer())
                     {
                         DrawTextRect(grap, player.Tag, font, textPoint);
@@ -83,7 +96,7 @@ namespace UnoSharp
                             DrawArraw(grap, new Point(textWidth / 2 + margin, textPoint.Y - 20), new Point(textWidth / 2 + margin, textPoint.Y - 20 - 50));
                         }
                         else
-                        {
+                        { //TODO bug
                             DrawArraw(grap, new Point(textWidth / 2 + margin, textPoint.Y + 80 + 20), new Point(textWidth / 2 + margin, textPoint.Y + 80 + 20 + 50));
                         }
                     }

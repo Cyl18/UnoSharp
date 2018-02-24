@@ -11,12 +11,7 @@ namespace UnoSharp
 {
     public static class ImageExtensions
     {
-        public static Bitmap ToImage(this Card card)
-        {
-            var path = $"UnoSharp.Resources.Cards.{card.Color}.{card.Value}.png";
-            var content = EmbedResourceReader.GetStream(path);
-            return new Bitmap(content);
-        }
+        
 
         public static Image ToImage(this ICollection<Card> cards)
         {
