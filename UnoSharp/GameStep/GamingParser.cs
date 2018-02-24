@@ -44,8 +44,7 @@ namespace UnoSharp.GameStep
                     return;
             }
 
-            if (!IsValidPlayer(desk, player))
-                return;
+            
 
             var card = command.ToCard();
             if (card != null && UnoRule.IsValidForFollowCard(card, desk.LastCard, desk.State))
@@ -61,7 +60,8 @@ namespace UnoSharp.GameStep
                 MoveNext(desk);
                 desk.SendLastCardMessage();
             }
-
+            if (!IsValidPlayer(desk, player))
+                return;
             // uno draw
             switch (command)
             {
@@ -76,7 +76,7 @@ namespace UnoSharp.GameStep
                     {
                         case GamingState.Gaming:
                             TimerDraw(desk, player, desk.LastCard);
-                            break;
+                            return;
                         case GamingState.WaitingDrawTwoOverlay:
                         case GamingState.WaitingDrawFourOverlay:
                             desk.FinishDraw(desk.CurrentPlayer);

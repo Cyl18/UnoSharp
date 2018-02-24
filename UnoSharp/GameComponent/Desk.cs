@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -74,7 +75,7 @@ namespace UnoSharp
             }
         }
 
-        private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>();
+        private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>()
 
         public IEnumerable<Player> Players => _playersDictionary.Values;
         public List<Player> PlayerList => Players.ToList();

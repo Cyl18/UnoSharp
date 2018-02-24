@@ -48,13 +48,13 @@ namespace UnoSharp.GameStep
             {
                 desk.Events.Add(new TimerEvent(() => { DoAutoSubmitCard(desk); }, 5, desk.Step));
             }
-            desk.Events.Add(new TimerEvent(() => { desk.AddMessage($"{desk.CurrentPlayer.AtCode}你只剩10s时间出牌啦!"); }, 15, desk.Step));
+            desk.Events.Add(new TimerEvent(() => { desk.AddMessage($"{desk.CurrentPlayer.AtCode}你只剩15s时间出牌啦!"); }, 25, desk.Step));
             desk.Events.Add(new TimerEvent(() =>
             {
                 desk.CurrentPlayer.AutoSubmitCard = true;
                 desk.AddMessage($"{desk.CurrentPlayer.AtCode}出牌超时");
                 DoAutoSubmitCard(desk);
-            }, 25, desk.Step));
+            }, 40, desk.Step));
 
         }
 
