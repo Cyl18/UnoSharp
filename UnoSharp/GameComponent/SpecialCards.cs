@@ -68,7 +68,7 @@ namespace UnoSharp.GameComponent
     {
         public override string Description { get; } = "将场上所有人的牌数量扣或加到7";
         public override string ShortName { get; } = "CJ";
-        public override int Chance { get; } = 6;
+        public override int Chance { get; } = 3;
 
         public override void Behave(Desk desk)
         {
@@ -123,7 +123,7 @@ namespace UnoSharp.GameComponent
 
     public class CardCY : SpecialCard
     {
-        public override string Description { get; } = "超稀有金卡: 你永远猜不到这张卡有什么功能";
+        public override string Description { get; } = "你永远猜不到这张卡有什么功能";
         public override string ShortName { get; } = "CY";
         public override int Chance { get; } = 2;
         public override void Behave(Desk desk)

@@ -50,6 +50,7 @@
     <Compile Include="GameComponent\Desk.cs" />
     <Compile Include="DeskRenderer.cs" />
     <Compile Include="EmbedResourceReader.cs" />
+    <Compile Include="GameComponent\FakePlayer.cs" />
     <Compile Include="GameComponent\ISpecialCard.cs" />
     <Compile Include="GameComponent\SpecialCard.cs" />
     <Compile Include="GameComponent\SpecialCards.cs" />
