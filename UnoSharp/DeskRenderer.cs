@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,9 +62,13 @@ namespace UnoSharp
 
             // text
             var longest = nicks.Max(nick => nick.Length);
-            
-            var textWidth = TextRenderer.MeasureText(new string('C', longest), font).Width;
+
             const int margin = 120;
+            var maxTextSize = TextRenderer.MeasureText(new string('C', longest), font);
+            var textWidth = maxTextSize.Width;
+            var textHeight = maxTextSize.Height;
+            var textCenterWidth = textWidth / 2;
+            var textCenter = textCenterWidth + margin;
             var beforeRenderBlankCardWidth = margin + textWidth + margin;
             var textPoint = new Point(margin, 32);
 
@@ -87,17 +92,50 @@ namespace UnoSharp
                     var player = players[index];
 
                     grap.DrawImage(blankCard, blankCardPoint);
+                    textPoint.X = margin + textCenterWidth - TextRenderer.MeasureText(player.Nick, font).Width / 2;
                     TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : Color.Gray);
                     if (player.IsCurrentPlayer())
                     {
-                        DrawTextRect(grap, player.Tag, font, textPoint);
+                        DrawTextRect(grap, player.Nick, font, textPoint);
                         if (player.Desk.Reversed)
                         {
-                            DrawArraw(grap, new Point(textWidth / 2 + margin, textPoint.Y - 20), new Point(textWidth / 2 + margin, textPoint.Y - 20 - 50));
+                            if (index == 0)
+                            {
+                                var pen = new Pen(Color.Cyan, 15);
+                                var upLineY = textPoint.Y + (textHeight + 15) / 2;
+                                var leftLineX = margin - 10;
+                                var anglePoint1 = new Point(leftLineX, upLineY);
+                                grap.DrawLine(pen, new Point(textPoint.X - 10, upLineY), anglePoint1); // 本玩家拉出来的线
+                                var downLineY = textPoint.Y + eachHeight * players.Count -
+                                                (eachHeight - textHeight) - 40;
+                                var anglePoint2 = new Point(leftLineX, downLineY);
+                                anglePoint1.Y -= 5;
+                                grap.DrawLine(pen, anglePoint1, anglePoint2);// 竖线
+                                anglePoint2.X -= 5;
+                                grap.DrawArraw(anglePoint2, new Point(margin + textCenterWidth - TextRenderer.MeasureText(players.Last().Nick, font).Width / 2 - 10, downLineY)); // 到目标玩家的箭头
+                            }
+                            else
+                                DrawArraw(grap, new Point(textCenter, textPoint.Y - 20), new Point(textCenter, textPoint.Y - 20 - 50));
                         }
                         else
                         { //TODO bug
-                            DrawArraw(grap, new Point(textWidth / 2 + margin, textPoint.Y + 80 + 20), new Point(textWidth / 2 + margin, textPoint.Y + 80 + 20 + 50));
+                            if (index == enumerable.Length - 1)
+                            {
+                                var pen = new Pen(Color.Cyan, 15);
+                                var upLineY = textPoint.Y + (textHeight + 15) / 2;
+                                var leftLineX = margin - 10;
+                                var anglePoint1 = new Point(leftLineX, upLineY);
+                                grap.DrawLine(pen, new Point(textPoint.X - 10, upLineY), anglePoint1);
+                                var downLineY = textPoint.Y - eachHeight * players.Count +
+                                                (eachHeight - textHeight) + 130;
+                                var anglePoint2 = new Point(leftLineX, downLineY);
+                                anglePoint1.Y += 5;
+                                grap.DrawLine(pen, anglePoint1, anglePoint2); // 竖线
+                                anglePoint2.X -= 5;
+                                grap.DrawArraw(anglePoint2, new Point(margin + textCenterWidth - TextRenderer.MeasureText(players.First().Nick, font).Width / 2 - 10, downLineY));
+                            }
+                            else
+                                DrawArraw(grap, new Point(textCenter, textPoint.Y + 80 + 20), new Point(textCenter, textPoint.Y + 80 + 20 + 50));
                         }
                     }
                     blankCardPoint.Y += eachHeight;
@@ -116,8 +154,8 @@ namespace UnoSharp
             var size = TextRenderer.MeasureText(text, font);
             var all = margin;
             var pDraw = new Point(point.X - all, point.Y - all);
-            var width = size.Width + margin; // margin*2/2
-            var height = size.Height + margin;
+            var width = size.Width + margin * 2; // margin*2/2
+            var height = size.Height + margin * 2;
             grap.DrawRectangle(pen, pDraw.X, pDraw.Y, width, height);
         }
 
