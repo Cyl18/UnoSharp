@@ -168,7 +168,7 @@ namespace UnoSharp
         {
             AddMessageLine($"{CurrentPlayer.AtCode}赢了!");
             PlayerList.ForEach(p => p.PublicCard = true);
-            AddMessage(this.RenderDesk().ToImageCode());
+            AddMessage(this.RenderDesk().ToImageCodeAndDispose());
             Task.Run(() =>
             {
                 Thread.Sleep(500);
@@ -180,7 +180,7 @@ namespace UnoSharp
         {
             if (Message?.EndsWith("出牌.") != true)
             {
-                AddMessageLine($"{this.RenderDesk().ToImageCode()}");
+                AddMessageLine($"{this.RenderDesk().ToImageCodeAndDispose()}");
                 AddMessage($"请{CurrentPlayer.AtCode}出牌.");
             }
         }

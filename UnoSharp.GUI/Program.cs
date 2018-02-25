@@ -20,7 +20,7 @@ namespace UnoSharp.GUI
 
 
             // To use code below you need to change some access modifiers and comment Line 55 (image.Resize(image.Width / 3, image.Height / 3).Save(filename);) in ImageExtensions.cs
-            /*Desk nd = new Desk("222");
+            Desk nd = new Desk("222");
             var conf = Config.Get();
             var nks = conf.Nicks;
             nks["LasmGratel"] = "苟枫凌";
@@ -35,9 +35,9 @@ namespace UnoSharp.GUI
             nd.AddPlayer(new Player("CharlieJiang", nd));
             
             nd.StartGame();
-            nd.CurrentParser.Reversed = true;
-            nd.CurrentParser.CurrentIndex = 0;
-            nd.RenderDesk().Save("px.png", ImageFormat.Png);*/
+            //nd.CurrentParser.Reversed = true;
+            //nd.CurrentParser.CurrentIndex = 0;
+            nd.RenderDesk().Save("px.png", ImageFormat.Png);
 
             //DeskRenderer.RenderDesk(desk).Save("test5.png");
             //var writer = File.CreateText("test.txt");

@@ -30,7 +30,7 @@ namespace UnoSharp.GameStep
                     foreach (var specialCard in Card.SpecialCards)
                     {
                         desk.AddMessageLine($"{specialCard.ShortName} {specialCard.Description}");
-                        desk.AddMessageLine(specialCard.ToImage().ToImageCode());
+                        desk.AddMessageLine(specialCard.ToImage().ToImageCodeAndDispose());
                     }
                     break;
             }

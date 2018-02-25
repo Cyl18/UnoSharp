@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,15 +48,13 @@ namespace UnoSharp
                 return bitmap;
             }
         }
-        private static readonly Random Rng = new Random("Chtholly Nota Seniorious".GetHashCode());
-
-        public static string ToImageCode(this Image image)
+        //private static readonly Random Rng = new Random("Chtholly Nota Seniorious".GetHashCode());
+        public static string ToImageCodeAndDispose(this Image image, bool forceOverwrite = false)
         {
-            var name = $"{Rng.Next()}";
-            var filename = $@"data\image\{name}.jpg";
-            image.Resize(image.Width / 3, image.Height / 3).Save(filename);
-            
-            return $"[CQ:image,file={name}.jpg]";
+            string filename = image.Resize(image.Width / 3, image.Height / 3).SaveToData(forceOverwrite);
+            image.Dispose();
+
+            return $"[CQ:image,file={filename}.jpg]";
         }
 
         public static Bitmap Resize(this Image image, int width, int height)
@@ -80,6 +80,29 @@ namespace UnoSharp
             return destImage;
         }
 
-        
+        public const string ImagePath = "data\\image";
+        private static string SaveToData(this Bitmap image, bool overwrite)
+        {
+            byte[] bytes;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, ImageFormat.Jpeg);
+                bytes = ms.ToArray();
+            }
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] hash = md5.ComputeHash(bytes);
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in hash)
+            {
+                sb.Append(b.ToString("x2").ToLower());
+            }
+            var filename = $@"{ImagePath}\{sb}.jpg";
+            if (!File.Exists(filename) || overwrite)
+            {
+                if (!Directory.Exists(ImagePath)) Directory.CreateDirectory(ImagePath);
+                File.WriteAllBytes(filename, bytes);
+            }
+            return filename;
+        }
     }
 }

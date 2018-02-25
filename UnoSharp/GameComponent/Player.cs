@@ -82,7 +82,7 @@ namespace UnoSharp
 
         public void SendCardsMessage()
         {
-            AddMessage(Cards.ToImage().ToImageCode());
+            AddMessage(Cards.ToImage().ToImageCodeAndDispose());
         }
 
         public void AddCardsAndSort(int count)

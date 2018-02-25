@@ -49,6 +49,8 @@ namespace Origind.Card.Uno
                 base.Load(builder);
                 builder.RegisterType<TimerEvent>().As<ITimerEvent>().AsSelf().SingleInstance();
                 builder.RegisterType<GroupMessageReceivedMahuaEvent1>().As<IGroupMessageReceivedMahuaEvent>();
+                builder.RegisterType<Cleaner>().As<IPluginEnabledMahuaEvent>();
+                builder.RegisterType<Cleaner>().As<IPluginDisabledMahuaEvent>();
                 // 将需要监听的事件注册，若缺少此注册，则不会调用相关的实现类
             }
         }
