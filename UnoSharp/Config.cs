@@ -15,7 +15,29 @@ namespace UnoSharp
         {
             File.WriteAllText(ConfigPath, this.ToJsonString());
         }
+
         public Dictionary<string, string> Nicks { get; } = new Dictionary<string, string>();
+
+        public Dictionary<string, List<string>> Commands { get; set; }
+
+        public Dictionary<string, List<string>> GetCommands()
+        {
+            if (Commands == null)
+            {
+                var messagesJson = EmbedResourceReader.Read("UnoSharp.Resources.messages.json"); // 默认信息JSON
+                Commands = messagesJson.JsonDeserialize<Dictionary<string, List<string>>>();
+            }
+
+            return Commands;
+        }
+
+        public Config()
+        {
+            Commands = GetCommands();
+            if (!File.Exists(ConfigPath))
+                Save();
+        }
+
         public static Config Get()
         {
             return File.Exists(ConfigPath)

@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using UnoSharp;
+using UnoSharp.GameStep;
 
 namespace UnoSharp.GUI
 {
@@ -42,6 +44,9 @@ namespace UnoSharp.GUI
             nd.RenderDesk().Save("px.png", ImageFormat.Png);*/
 
             //DeskRenderer.RenderDesk(desk).Save("test5.png");
+            //var writer = File.CreateText("test.txt");
+            //writer.Write(GameStepBase.ToGenericCommand("摸"));
+            //writer.Close();
         }
     }
 }
