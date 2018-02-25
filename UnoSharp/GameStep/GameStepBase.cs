@@ -26,7 +26,7 @@ namespace UnoSharp.GameStep
             {
                 if (entry.Value.Contains(command))
                 {
-                    GenericCommandCache.Add(entry.Key, command);
+                    GenericCommandCache[entry.Key] = command;
                     genericCommand = entry.Key;
                 }
             }
