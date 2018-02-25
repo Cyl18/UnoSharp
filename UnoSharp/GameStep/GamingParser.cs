@@ -15,6 +15,7 @@ namespace UnoSharp.GameStep
             var card = command.ToCard();
 
             command = ToGenericCommand(command);
+            
             switch (command)
             {
                 case "lastCard":

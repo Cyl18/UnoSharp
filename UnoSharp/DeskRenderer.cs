@@ -220,7 +220,7 @@ namespace UnoSharp
 
         public static Image RenderDesk(this Desk desk)
         {
-            Image bitmap;
+            Bitmap bitmap;
             using (Image 
                 playersImage = desk.PlayerList.RenderPlayers(), 
                 lastCardImage = desk.LastCard.ToImage().RenderLastCard())
@@ -229,6 +229,10 @@ namespace UnoSharp
                 var width = Math.Max(playersImage.Width, playersImage.Width) + margin;
                 var height = margin + playersImage.Height + margin + lastCardImage.Height + margin;
                 bitmap = new Bitmap(width, height);
+                for (var i = 0; i < width; i++)
+                    for (var j = 0; j < height; j++)
+                        bitmap.SetPixel(i, j, Color.White);
+
                 var grap = Graphics.FromImage(bitmap);
                 var point = new Point();
                 using (grap)

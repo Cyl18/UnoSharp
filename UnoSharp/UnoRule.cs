@@ -57,9 +57,9 @@ namespace UnoSharp
                 case GamingState.WaitingDrawFourOverlay:
                     var card = ExtractCard(cards, lastCard, state);
                     if (card?.Color == CardColor.Wild) card.Color = ToWildColor(cards);
-                    return card == null ? "draw" : card.ToShortString();
+                    return card == null ? "摸了" : card.ToShortString();
                 case GamingState.Doubting:
-                    return Rng.Next(8) > 5 ? "质疑" : "不质疑";
+                    return Rng.Next(8) > 5 ? "喵喵喵?" : "不质疑";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }

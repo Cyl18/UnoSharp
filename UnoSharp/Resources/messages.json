@@ -10,13 +10,27 @@
         "抽卡！",
         "抽卡",
         "摸了",
-        "cnm"
+        "cnm",
+        "膜",
+        "膜了",
+        "苟了"
     ],
     "lastCard": [ "上一张牌", "全场信息" ],
     "myRound": [ "我的回合", "我的回合！", "我的回合!" ],
     "publicCard": [ "明牌" ],
-    "doubt": [ "质疑" ],
-    "nonDoubt": [ "不质疑" ],
+    "doubt": [
+        "质疑",
+        "喵喵喵?",
+        "喵喵喵",
+        "喵喵喵？"
+    ],
+    "nonDoubt": [
+        "不质疑",
+        "nope",
+        "nop",
+        "Nop",
+        "不"
+    ],
     "uno": [ "UNO", "UNO!", "UNO！", "uno", "uNo", "uNO", "uno!", "uno！" ],
     "doubtUno": [ "质疑uno", "质疑UNO", "UNO PLZ", "uno plz" ],
     "join": [ "加入uno", "加入UNO" ],
