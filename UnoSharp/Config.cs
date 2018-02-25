@@ -18,7 +18,7 @@ namespace UnoSharp
 
         public Dictionary<string, string> Nicks { get; } = new Dictionary<string, string>();
 
-        public Dictionary<string, List<string>> Commands { get; set; }
+        private Dictionary<string, List<string>> Commands { get; set; }
 
         public Dictionary<string, List<string>> GetCommands()
         {
