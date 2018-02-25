@@ -23,7 +23,8 @@ namespace UnoSharp
 
         public static void RenderImageWithShadow(this Graphics graphics, Image image, Point point, int radius, float opacity)
         {
-            graphics.DrawImage(GaussianHelper.CreateShadow(image, radius, opacity), point);
+            using (Image shadow = GaussianHelper.CreateShadow(image, radius, opacity))
+                graphics.DrawImage(shadow, point);
             graphics.DrawImage(image, point);
         }
 
@@ -152,6 +153,12 @@ namespace UnoSharp
 
                 }
 
+            foreach (var image in enumerable)
+            {
+                if (!image.IsCachedImage())
+                    image.Dispose();
+            }
+            font.Dispose();
             return bitmap;
         }
 
@@ -205,28 +212,36 @@ namespace UnoSharp
                 TextRenderer.DrawText(grap, text, font, textPoint, Color.Gray);
             }
 
+            if (!lastCard.IsCachedImage())
+                lastCard.Dispose();
+
             return bitmap;
         }
 
         public static Image RenderDesk(this Desk desk)
         {
-            var playersImage = desk.PlayerList.RenderPlayers();
-            var lastCardImage = desk.LastCard.ToImage().RenderLastCard();
-            const int margin = 40;
-            var width = Math.Max(playersImage.Width, playersImage.Width) + margin;
-            var height = margin + playersImage.Height + margin + lastCardImage.Height + margin;
-            var bitmap = new Bitmap(width, height);
-            var grap = Graphics.FromImage(bitmap);
-            var point = new Point();
-            using (grap)
+            Image bitmap;
+            using (Image 
+                playersImage = desk.PlayerList.RenderPlayers(), 
+                lastCardImage = desk.LastCard.ToImage().RenderLastCard())
             {
-                point.Y += margin;
-                grap.RenderImageWithShadow(playersImage, point, 5, Opacity);
-                point.Y += playersImage.Height;
-                point.Y += margin;
-                grap.RenderImageWithShadow(lastCardImage, point, 5, Opacity);
-                point.Y += margin;
+                const int margin = 40;
+                var width = Math.Max(playersImage.Width, playersImage.Width) + margin;
+                var height = margin + playersImage.Height + margin + lastCardImage.Height + margin;
+                bitmap = new Bitmap(width, height);
+                var grap = Graphics.FromImage(bitmap);
+                var point = new Point();
+                using (grap)
+                {
+                    point.Y += margin;
+                    grap.RenderImageWithShadow(playersImage, point, 5, Opacity);
+                    point.Y += playersImage.Height;
+                    point.Y += margin;
+                    grap.RenderImageWithShadow(lastCardImage, point, 5, Opacity);
+                    point.Y += margin;
+                }
             }
+            
 
             return bitmap;
         }

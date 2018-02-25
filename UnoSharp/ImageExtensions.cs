@@ -52,7 +52,7 @@ namespace UnoSharp
         public static string ToImageCodeAndDispose(this Image image, bool forceOverwrite = false)
         {
             string filename = image.Resize(image.Width / 3, image.Height / 3).SaveToData(forceOverwrite);
-            image.Dispose();
+            if (!image.IsCachedImage()) image.Dispose();
 
             return $"[CQ:image,file={filename}.jpg]";
         }
@@ -103,6 +103,13 @@ namespace UnoSharp
                 File.WriteAllBytes(filename, bytes);
             }
             return filename;
+        }
+
+        public static bool IsCachedImage(this Image image)
+        {
+            // TODO ADD all cached image here
+            return image == Card.MainCardImage ||
+                   image == Card.GoldenCardImage;
         }
     }
 }
