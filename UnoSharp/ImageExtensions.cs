@@ -102,7 +102,7 @@ namespace UnoSharp
                 if (!Directory.Exists(ImagePath)) Directory.CreateDirectory(ImagePath);
                 File.WriteAllBytes(filename, bytes);
             }
-            return filename;
+            return sb.ToString();
         }
 
         public static bool IsCachedImage(this Image image)
