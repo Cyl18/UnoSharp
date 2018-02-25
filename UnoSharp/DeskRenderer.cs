@@ -73,7 +73,7 @@ namespace UnoSharp
             var longest = nicks.Max(nick => nick.Length);
 
             const int margin = 120;
-            var maxTextSize = TextRenderer.MeasureText(new string('C', longest), font);
+            var maxTextSize = TextRenderer.MeasureText(new string('珂', longest), font);
             var textWidth = maxTextSize.Width;
             var textHeight = maxTextSize.Height;
             var textCenterWidth = textWidth / 2;

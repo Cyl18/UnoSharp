@@ -75,7 +75,7 @@ namespace UnoSharp
             }
         }
 
-        private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>()
+        private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>();
 
         public IEnumerable<Player> Players => _playersDictionary.Values;
         public List<Player> PlayerList => Players.ToList();

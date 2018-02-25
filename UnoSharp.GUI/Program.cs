@@ -1,5 +1,4 @@
-﻿#define GUI
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -22,23 +21,20 @@ namespace UnoSharp.GUI
             /*Desk nd = new Desk("222");
             var conf = Config.Get();
             var nks = conf.Nicks;
-            nks["LasmGratel"] = "LasmGratel";
-            nks["Cyl17"] = "Cyl17";
-            nks["CharlieJiang"] = "CharlieJiang";
-            nks["Baka84"] = "Baka84";
+            nks["LasmGratel"] = "苟枫凌";
+            nks["Cyl17"] = "A125";
+            nks["CharlieJiang"] = "RED";
+            nks["Baka84"] = "膜法少女LG大续命师";
             conf.Save();
 
             nd.AddPlayer(new Player("LasmGratel", nd));
             nd.AddPlayer(new Player("Cyl17", nd));
-            nd.AddPlayer(new Player("CharlieJiang", nd));
             nd.AddPlayer(new Player("Baka84", nd));
-            nd.AddPlayer(new Player("LasmG2ratel", nd));
-            nd.AddPlayer(new Player("Cyl127", nd));
-            nd.AddPlayer(new Player("Charl2ieJiang", nd));
-            nd.AddPlayer(new Player("Bak2a84", nd));
+            nd.AddPlayer(new Player("CharlieJiang", nd));
+            
             nd.StartGame();
-            //nd.CurrentParser.Reversed = true;
-            nd.CurrentParser.CurrentIndex = 5;
+            nd.CurrentParser.Reversed = true;
+            nd.CurrentParser.CurrentIndex = 0;
             nd.RenderDesk().Save("px.png", ImageFormat.Png);*/
 
             //DeskRenderer.RenderDesk(desk).Save("test5.png");
