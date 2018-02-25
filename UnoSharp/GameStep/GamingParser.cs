@@ -12,10 +12,10 @@ namespace UnoSharp.GameStep
     {
         public override void Parse(Desk desk, Player player, string command)
         {
+            command = ToGenericCommand(command);
             switch (command)
             {
-                case "上一张牌":
-                case "全场信息":
+                case "lastCard":
                     desk.SendLastCardMessage();
                     return;
             }
@@ -25,20 +25,18 @@ namespace UnoSharp.GameStep
                 return;
             switch (command)
             {
-                case "明牌":
+                case "publicCard":
                     player.PublicCard = true;
                     desk.AddMessage("明牌成功.");
                     return;
-                case "我的回合":
-                case "我的回合!":
-                case "我的回合！":
+                case "myRound":
                     desk.AddMessage("是是, 我们都知道是你的回合");
                     return;
-                case "启用托管":
+                case "autoSubmit":
                     desk.AddMessage("完成.");
                     player.AutoSubmitCard = true;
                     return;
-                case "关闭托管":
+                case "disableAutoSubmit":
                     desk.AddMessage("完成.");
                     player.AutoSubmitCard = false;
                     return;
@@ -65,13 +63,7 @@ namespace UnoSharp.GameStep
             // uno draw
             switch (command)
             {
-                case "摸":
-                case "摸牌":
-                case "mo":
                 case "draw":
-                case "画画": // cnm 当麻
-                case "抽卡！": //为了84！
-                case "抽卡":
                     switch (desk.State)
                     {
                         case GamingState.Gaming:
@@ -96,10 +88,10 @@ namespace UnoSharp.GameStep
             {
                 switch (command)
                 {
-                    case "质疑":
+                    case "doubt":
                         FinishDoubt(desk, player, true);
                         return;
-                    case "不质疑":
+                    case "nonDoubt":
                         FinishDoubt(desk, player, false);
                         return;
                     default:
@@ -204,11 +196,9 @@ namespace UnoSharp.GameStep
 
         private bool ParseUnoCommand(Desk desk, Player player, string command)
         {
-            switch (command.ToUpper())
+            switch (command)
             {
-                case "UNO":
-                case "UNO!":
-                case "UNO！":
+                case "uno":
                     if ((desk.CurrentPlayer == player && player.Cards.Count == 2) ||
                         (desk.LastSendPlayer == player && player.Cards.Count == 1))
                     {
@@ -220,8 +210,7 @@ namespace UnoSharp.GameStep
                         desk.AddMessage("你还不能说 UNO!");
                     }
                     return true;
-                case "质疑UNO":
-                case "UNO PLZ":
+                case "doubtUno":
                     if (desk.LastSendPlayer.Cards.Count == 1 && !desk.LastSendPlayer.Uno)
                     {
                         desk.AddMessage($"{desk.LastSendPlayer.AtCode}没有说 UNO, 被罚两张!");
@@ -245,7 +234,7 @@ namespace UnoSharp.GameStep
                     // ignored
                     break;
                 case CardType.Reverse:
-                    desk.AddMessage($"方向反转.");
+                    desk.AddMessage("方向反转.");
                     Reverse();
                     MoveNext(desk);
                     MoveNext(desk);

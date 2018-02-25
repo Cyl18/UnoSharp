@@ -11,18 +11,19 @@ namespace UnoSharp.GameStep
     {
         public override void Parse(Desk desk, Player player, string command)
         {
-            switch (command.ToUpper())
+            var genericCommand = ToGenericCommand(command);
+            switch (genericCommand)
             {
-                case "加入UNO":
+                case "join":
                     desk.AddPlayer(player);
                     break;
-                case "离开UNO":
+                case "leave":
                     desk.RemovePlayer(player);
                     break;
-                case "添加机器人":
+                case "addRobot":
                     desk.AddMessage("请使用 添加机器人 [昵称]");
                     break;
-                case "开始UNO":
+                case "start":
                     desk.StartGame();
                     break;
             }
