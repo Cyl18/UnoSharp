@@ -12,6 +12,8 @@ namespace UnoSharp.GameStep
     {
         public override void Parse(Desk desk, Player player, string command)
         {
+            var card = command.ToCard();
+
             command = ToGenericCommand(command);
             switch (command)
             {
@@ -44,7 +46,6 @@ namespace UnoSharp.GameStep
 
             
 
-            var card = command.ToCard();
             if (card != null && UnoRule.IsValidForFollowCard(card, desk.LastCard, desk.State))
             {
                 if (!card.IsValidForPlayerAndRemove(player))
@@ -150,9 +151,13 @@ namespace UnoSharp.GameStep
         {
             var genCard = Card.Generate();
             player.AddCardAndSort(genCard);
-            if (UnoRule.IsValid(genCard, deskLastCard, desk.State))
+            if (UnoRule.IsValid(genCard, deskLastCard, desk.State) || true)
             {
                 desk.AddMessageLine("摸牌结束. 强制打出.");
+                if (genCard.Color == CardColor.Wild)
+                {
+                    genCard.Color = UnoRule.ToWildColor(player.Cards);
+                }
                 desk.ParseMessage(player.PlayerId, genCard.ToShortString());
             }
             else

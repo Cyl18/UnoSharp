@@ -20,6 +20,7 @@ namespace UnoSharp.GUI
 
 
             // To use code below you need to change some access modifiers and comment Line 55 (image.Resize(image.Width / 3, image.Height / 3).Save(filename);) in ImageExtensions.cs
+            /*
             Desk nd = new Desk("222");
             var conf = Config.Get();
             var nks = conf.Nicks;
@@ -38,7 +39,8 @@ namespace UnoSharp.GUI
             //nd.CurrentParser.Reversed = true;
             //nd.CurrentParser.CurrentIndex = 0;
             nd.RenderDesk().Save("px.png", ImageFormat.Png);
-
+            */
+            Card.CardsPool.ToImage().Save("test.png");
             //DeskRenderer.RenderDesk(desk).Save("test5.png");
             //var writer = File.CreateText("test.txt");
             //writer.Write(GameStepBase.ToGenericCommand("摸"));

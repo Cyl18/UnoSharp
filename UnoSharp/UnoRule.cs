@@ -81,7 +81,7 @@ namespace UnoSharp
                     throw new Exception("WTF??");
             }
         }
-        private static CardColor ToWildColor(List<Card> cards)
+        public static CardColor ToWildColor(List<Card> cards)
         {
             var gcards = cards.Where(card => card.Color != CardColor.Wild && card.Color != CardColor.Special).ToList();
             if (gcards.Count == 0) return PickColor();
