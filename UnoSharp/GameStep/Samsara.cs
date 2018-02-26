@@ -44,18 +44,7 @@ namespace UnoSharp.GameStep
                 CurrentIndex = (CurrentIndex + 1) % desk.Players.Count();
             }
 
-            if (desk.CurrentPlayer.AutoSubmitCard)
-            {
-                desk.Events.Add(new TimerEvent(() => { DoAutoSubmitCard(desk); }, 5, desk.Step));
-            }
-            desk.Events.Add(new TimerEvent(() => { desk.AddMessage($"{desk.CurrentPlayer.AtCode}你只剩15s时间出牌啦!"); }, 25, desk.Step));
-            desk.Events.Add(new TimerEvent(() =>
-            {
-                desk.CurrentPlayer.AutoSubmitCard = true;
-                desk.AddMessage($"{desk.CurrentPlayer.AtCode}出牌超时");
-                DoAutoSubmitCard(desk);
-            }, 40, desk.Step));
-
+            
         }
 
         public static void DoAutoSubmitCard(Desk desk)

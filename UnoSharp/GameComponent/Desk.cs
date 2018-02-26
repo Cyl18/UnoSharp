@@ -182,6 +182,18 @@ namespace UnoSharp
             {
                 AddMessageLine($"{this.RenderDesk().ToImageCodeAndDispose()}");
                 AddMessage($"请{CurrentPlayer.AtCode}出牌.");
+                if (CurrentPlayer.AutoSubmitCard)
+                {
+                    Events.Add(new TimerEvent(() => {Samsara.DoAutoSubmitCard(this); }, 5, Step));
+                }
+                Events.Add(new TimerEvent(() => { AddMessage($"{CurrentPlayer.AtCode}你只剩15s时间出牌啦!"); }, 25, Step));
+                Events.Add(new TimerEvent(() =>
+                {
+                    CurrentPlayer.AutoSubmitCard = true;
+                    AddMessage($"{CurrentPlayer.AtCode}出牌超时");
+                    Samsara.DoAutoSubmitCard(this);
+                }, 40, Step));
+
             }
         }
 
