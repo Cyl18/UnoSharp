@@ -18,7 +18,7 @@ namespace UnoSharp
         public string PlayerId { get; }
         public Desk Desk { get; }
         public int Index { get; internal set; }
-        public string Tag => $"P{Index+1}";
+        public string Tag => $"P{Index + 1}";
         public virtual string AtCode => $"{Nick}-{ToAtCode()}";
         public virtual bool AutoSubmitCard { get; internal set; }
         public List<Card> Cards { get; internal set; } = new List<Card>();
@@ -33,7 +33,7 @@ namespace UnoSharp
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((Player) obj);
+            return obj.GetType() == this.GetType() && Equals((Player)obj);
         }
 
         public override int GetHashCode()
@@ -73,11 +73,7 @@ namespace UnoSharp
 
         public virtual string ToAtCode()
         {
-#if !DEBUG
             return $"[CQ:at,qq={PlayerId}]";
-#else
-            return $"{PlayerId}";
-#endif
         }
 
         public void SendCardsMessage()
@@ -88,7 +84,7 @@ namespace UnoSharp
         public void AddCardsAndSort(int count)
         {
             var cards = Card.Generate(count).ToArray();
-            if (cards.Any(card =>card is ISpecialCard))
+            if (cards.Any(card => card is ISpecialCard))
             {
                 SendSpecialCardMessage(cards);
             }
@@ -97,6 +93,7 @@ namespace UnoSharp
             if (Uno) Uno = false;
             SendCardsMessage();
         }
+
         public void AddCardAndSort(Card card)
         {
             if (card is ISpecialCard sp)
@@ -117,13 +114,11 @@ namespace UnoSharp
             {
                 AddMessageLine($"{sp.ShortName}: {sp.Description}");
             }
-
         }
 
         public bool IsCurrentPlayer()
         {
             return Desk.CurrentPlayer.PlayerId == PlayerId;
         }
-
     }
 }

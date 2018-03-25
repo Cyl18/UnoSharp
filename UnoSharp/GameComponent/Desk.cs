@@ -47,7 +47,6 @@ namespace UnoSharp
         internal GameStepBase CurrentParser;
         public GamingState State { get; internal set; }
 
-
         public Desk(string deskId)
         {
             DeskId = deskId;
@@ -184,7 +183,7 @@ namespace UnoSharp
                 AddMessage($"请{CurrentPlayer.AtCode}出牌.");
                 if (CurrentPlayer.AutoSubmitCard)
                 {
-                    Events.Add(new TimerEvent(() => {Samsara.DoAutoSubmitCard(this); }, 5, Step));
+                    Events.Add(new TimerEvent(() => { Samsara.DoAutoSubmitCard(this); }, 5, Step));
                 }
                 Events.Add(new TimerEvent(() => { AddMessage($"{CurrentPlayer.AtCode}你只剩15s时间出牌啦!"); }, 25, Step));
                 Events.Add(new TimerEvent(() =>
@@ -193,24 +192,28 @@ namespace UnoSharp
                     AddMessage($"{CurrentPlayer.AtCode}出牌超时");
                     Samsara.DoAutoSubmitCard(this);
                 }, 40, Step));
-
             }
         }
+
+        public readonly static object Locker = new object();
 
         public void ParseMessage(string playerid, string message)
         {
-            try
+            lock (Locker)
             {
-                var player = GetPlayer(playerid);
-                CurrentParser.Parse(this, player, message);
-                _standardParser.Parse(this, player, message);
+                try
+                {
+                    var player = GetPlayer(playerid);
+                    CurrentParser.Parse(this, player, message);
+                    _standardParser.Parse(this, player, message);
+                }
+                catch (Exception e)
+                {
+                    AddMessage($"抱歉我们在处理你的命令时发生了错误{e}");
+                }
             }
-            catch (Exception e)
-            {
-                AddMessage($"抱歉我们在处理你的命令时发生了错误{e}");
-            }
-
         }
+
         //√BUG  after doubt boardcast cards
         //√BUG  doubt crash
         //√TODO public card anyone can use
@@ -242,7 +245,6 @@ namespace UnoSharp
                 SendLastCardMessage();
             }
         }
-
     }
 
     public enum GamingState

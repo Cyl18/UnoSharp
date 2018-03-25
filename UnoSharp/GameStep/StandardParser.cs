@@ -13,9 +13,9 @@ namespace UnoSharp.GameStep
             if (command.StartsWith("设置昵称 "))
             {
                 var nick = command.Substring("设置昵称 ".Length);
-                if (nick.Length>20)
+                if (nick.Length > 40)
                 {
-                    desk.AddMessage("不要设置 太长的昵称 请。");
+                    desk.AddMessage("请不要设置 太长的昵称 。");
                     return;
                 }
                 var config = Config.Get();
@@ -33,6 +33,19 @@ namespace UnoSharp.GameStep
                         desk.AddMessageLine(specialCard.ToImage().ToImageCodeAndDispose());
                     }
                     break;
+            }
+
+            if (Config.IdAdmin(player.PlayerId))
+            {
+                if (command.StartsWith("印卡"))
+                {
+                    var split = command.Split(' ');
+                    var target = split[1];
+                    var num = int.Parse(split[2]);
+                    desk.GetPlayer(target).AddCardsAndSort(num);
+                    desk.AddMessage("[印卡场] Done.");
+                    desk.SendLastCardMessage();
+                }
             }
         }
     }

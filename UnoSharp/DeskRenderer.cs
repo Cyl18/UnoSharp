@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Schema;
@@ -16,15 +17,18 @@ namespace UnoSharp
     {
         private static readonly float Opacity = 0.3f;
         private static readonly int Padding = 20;
+        private static readonly int BaseLength = Card.MainCardImage.Width;
+        private static readonly int Height = Card.MainCardImage.Height;
 
         private static int GetEachLength(int baseLength) => (int)(baseLength / 5.0 * 2.0);
+
         private static int GetLength(int baseLength, int eachLength, int count) =>
             baseLength + eachLength * (count - 1);
 
         public static void RenderImageWithShadow(this Graphics graphics, Image image, Point point, int radius, float opacity)
         {
-            using (Image shadow = GaussianHelper.CreateShadow(image, radius, opacity))
-                graphics.DrawImage(shadow, point);
+            //using (Image shadow = GaussianHelper.CreateShadow(image, radius, opacity))
+            //    graphics.DrawImage(shadow, point);
             graphics.DrawImage(image, point);
         }
 
@@ -35,11 +39,11 @@ namespace UnoSharp
             if (count == 1)
                 return Card.MainCardImage;
 
-            var baseLength = Card.MainCardImage.Width;
+            var baseLength = BaseLength;
             var eachWidth = GetEachLength(baseLength);
             var width = GetLength(baseLength, eachWidth, count);
             var point = new Point(0, 0);
-            var bitmap = new Bitmap(width + Padding, Card.MainCardImage.Height + Padding); // 增加一个阴影的padding
+            var bitmap = new Bitmap(width + Padding, Height + Padding); // 增加一个阴影的padding
             var grap = Graphics.FromImage(bitmap);
             using (grap)
             {
@@ -63,10 +67,13 @@ namespace UnoSharp
         {
             // init
             var font = new Font("Microsoft YaHei", 52);
-            var blankCards = from player in players
-                select player.PublicCard
-                    ? player.Cards.ToImage()
-                    : RenderBlankCards(player.Cards.Count, player.Cards.Count(card => card is ISpecialCard));
+            var blankCards = players.Select(player =>
+            {
+                if (player.PublicCard)
+                    return player.Cards.ToImage();
+                else
+                    return RenderBlankCards(player.Cards.Count, player.Cards.Count(card => card is ISpecialCard));
+            });
             var enumerable = blankCards.ToArray();
             var nicks = players.Select(player => player.Nick);
 
@@ -150,7 +157,6 @@ namespace UnoSharp
                     }
                     blankCardPoint.Y += eachHeight;
                     textPoint.Y += eachHeight;
-
                 }
 
             foreach (var image in enumerable)
@@ -221,19 +227,20 @@ namespace UnoSharp
         public static Image RenderDesk(this Desk desk)
         {
             Bitmap bitmap;
-            using (Image 
-                playersImage = desk.PlayerList.RenderPlayers(), 
+            using (Image
+                playersImage = desk.PlayerList.RenderPlayers(),
                 lastCardImage = desk.LastCard.ToImage().RenderLastCard())
             {
                 const int margin = 40;
                 var width = Math.Max(playersImage.Width, playersImage.Width) + margin;
                 var height = margin + playersImage.Height + margin + lastCardImage.Height + margin;
                 bitmap = new Bitmap(width, height);
-                for (var i = 0; i < width; i++)
-                    for (var j = 0; j < height; j++)
-                        bitmap.SetPixel(i, j, Color.White);
+                //for (var i = 0; i < width; i++)
+                //   for (var j = 0; j < height; j++)
+                //       bitmap.SetPixel(i, j, Color.White);
 
                 var grap = Graphics.FromImage(bitmap);
+                grap.FillRegion(Brushes.White, new Region(new Rectangle(0, 0, width, height)));
                 var point = new Point();
                 using (grap)
                 {
@@ -245,7 +252,6 @@ namespace UnoSharp
                     point.Y += margin;
                 }
             }
-            
 
             return bitmap;
         }

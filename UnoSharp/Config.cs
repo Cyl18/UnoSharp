@@ -44,5 +44,7 @@ namespace UnoSharp
                 ? File.ReadAllText(ConfigPath).JsonDeserialize<Config>()
                 : new Config();
         }
+
+        public static bool IdAdmin(string playerid) => playerid == "775942303";
     }
 }

@@ -22,16 +22,21 @@ namespace UnoSharp
                             return true;
                     }
                     return thisCard.Color == lastCard.Color || thisCard.ValueNumber == lastCard.ValueNumber;
+
                 case GamingState.WaitingDrawTwoOverlay:
                     return thisCard.Type == CardType.DrawTwo;
+
                 case GamingState.WaitingDrawFourOverlay:
                     return thisCard.Type == CardType.DrawFour;
+
                 case GamingState.Doubting:
                     return false;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, "Unknown state!");
             }
         }
+
         private static readonly Random Rng = new Random("YuukiAsuna-Kantinatron-Neutron-KirigayaKazuto-Cryptoshop-Nephren Ruq Insania".GetHashCode());
 
         public static bool IsValidForFollowCard(Card thisCard, Card lastCard, GamingState state)
@@ -40,14 +45,17 @@ namespace UnoSharp
             {
                 case GamingState.Gaming:
                     return thisCard.Type == CardType.Number && thisCard.Color == lastCard.Color && thisCard.Value == lastCard.Value;
+
                 case GamingState.WaitingDrawTwoOverlay:
                 case GamingState.WaitingDrawFourOverlay:
                 case GamingState.Doubting:
                     return false;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
+
         public static string ExtractCommand(List<Card> cards, Card lastCard, GamingState state)
         {
             switch (state)
@@ -58,29 +66,36 @@ namespace UnoSharp
                     var card = ExtractCard(cards, lastCard, state);
                     if (card?.Color == CardColor.Wild) card.Color = ToWildColor(cards);
                     return card == null ? "摸了" : card.ToShortString();
+
                 case GamingState.Doubting:
                     return Rng.Next(8) > 5 ? "喵喵喵?" : "不质疑";
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
-        
+
         private static CardColor PickColor()
         {
             switch (Rng.Next(4))
             {
                 case 0:
                     return CardColor.Red;
+
                 case 1:
                     return CardColor.Green;
+
                 case 2:
                     return CardColor.Blue;
+
                 case 3:
                     return CardColor.Yellow;
+
                 default:
                     throw new Exception("WTF??");
             }
         }
+
         public static CardColor ToWildColor(List<Card> cards)
         {
             var gcards = cards.Where(card => card.Color != CardColor.Wild && card.Color != CardColor.Special).ToList();
@@ -102,20 +117,23 @@ namespace UnoSharp
 
         public static Card ExtractCard(List<Card> cards, Card lastCard, GamingState state)
         {
-            var valids = new List<Card>();
-            foreach (var card in cards)
+            lock (Desk.Locker)
             {
-                if (IsValid(card, lastCard, state))
+                var valids = new List<Card>();
+                foreach (var card in cards)
                 {
-                    valids.Add(card);
+                    if (IsValid(card, lastCard, state))
+                    {
+                        valids.Add(card);
+                    }
                 }
-            }
 
-            if (valids.Count == 0) return null;
-            
-            var valueWithCards = (from valid in valids select new {ValidCard = valid, Value = GetValue(valid, lastCard, valids, cards)}).ToArray();
-            var maxs = valueWithCards.Where(i => i.Value == valueWithCards.Max(item => item.Value)).ToList();
-            return maxs.PickOne().ValidCard;
+                if (valids.Count == 0) return null;
+
+                var valueWithCards = (from valid in valids select new { ValidCard = valid, Value = GetValue(valid, lastCard, valids, cards) }).ToArray();
+                var maxs = valueWithCards.Where(i => i.Value == valueWithCards.Max(item => item.Value)).ToList();
+                return maxs.PickOne().ValidCard;
+            }
         }
 
         private static int GetValue(Card valid, Card lastCard, List<Card> valids, List<Card> allCards)

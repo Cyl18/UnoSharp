@@ -25,14 +25,20 @@ namespace Origind.Card.Uno.MahuaEvents
             _timerEvent.Start();
         }
 
+        private static readonly object _locker = new object();
+
         public void ProcessGroupMessage(GroupMessageReceivedContext context)
         {
-            var deskid = context.FromGroup;
-            var playerid = context.FromQq;
-            var message = context.Message;
-            
-            var desk = Desk.GetOrCreateDesk(deskid);
-            desk.ParseMessage(playerid, message);
+            lock (_locker)
+            {
+                var deskid = context.FromGroup;
+                var playerid = context.FromQq;
+                var message = context.Message;
+
+                var desk = Desk.GetOrCreateDesk(deskid);
+                desk.ParseMessage(playerid, message);
+            }
+
             // 不要忘记在MahuaModule中注册
         }
     }

@@ -16,14 +16,13 @@ namespace UnoSharp.GUI
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //var s = string.Join(", ", Card.CardsPool.Select(card => card.ToString()));
             //Console.WriteLine(s);
 
-
             // To use code below you need to change some access modifiers and comment Line 55 (image.Resize(image.Width / 3, image.Height / 3).Save(filename);) in ImageExtensions.cs
-            
+
             Desk nd = new Desk("222");
             var conf = Config.Get();
             var nks = conf.Nicks;
@@ -33,12 +32,13 @@ namespace UnoSharp.GUI
             nks["Baka84"] = "膜法少女LG大续命师";
             conf.Save();
 
-            nd.AddPlayer(new FakePlayer("LasmGratel", nd));
-            nd.AddPlayer(new FakePlayer("Cyl17", nd));
-            nd.AddPlayer(new FakePlayer("Baka84", nd));
-            nd.AddPlayer(new FakePlayer("CharlieJiang", nd));
-            
+            nd.AddPlayer(new Player("LasmGratel", nd));
+            nd.AddPlayer(new Player("Cyl17", nd));
+            nd.AddPlayer(new Player("Baka84", nd));
+            nd.AddPlayer(new Player("CharlieJiang", nd));
+
             nd.StartGame();
+            Thread.Sleep(1000);
             var timer = new Timer(100);
             timer.Elapsed += (sender, aargs) =>
             {
@@ -58,11 +58,31 @@ namespace UnoSharp.GUI
                     Console.WriteLine(msg);
                 }
             };
-            timer.Start();
+            //timer.Start();
             //nd.CurrentParser.Reversed = true;
             //nd.CurrentParser.CurrentIndex = 0;
-            nd.RenderDesk().Save("px.png", ImageFormat.Png);
-            
+            nd.CurrentPlayer.AddCardsAndSort(1000);
+            Thread.Sleep(1000);
+            for (int i = 0; i < 4; i++)
+            {
+                nd.RenderDesk();
+            }
+            // nd.RenderDesk();
+            //  nd.RenderDesk();
+            //   nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+            //     nd.RenderDesk();
+            //    nd.RenderDesk();
+            //    nd.RenderDesk();
+
             //Card.CardsPool.ToImage().Save("test.png");
             //DeskRenderer.RenderDesk(desk).Save("test5.png");
             //var writer = File.CreateText("test.txt");

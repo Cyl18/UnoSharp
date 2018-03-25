@@ -166,5 +166,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Cards\Special\902.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Cards\Special\LG2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
