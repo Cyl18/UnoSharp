@@ -76,9 +76,9 @@ namespace UnoSharp
             }
         }
 
-        public static IEnumerable<Card> Generate(ulong num)
+        public static IEnumerable<Card> Generate(int num)
         {
-            for (var i = 0ul; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
                 yield return Generate();
             }

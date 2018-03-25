@@ -81,7 +81,7 @@ namespace UnoSharp
             AddMessage(Cards.ToImage().ToImageCodeAndDispose());
         }
 
-        public void AddCardsAndSort(ulong count)
+        public void AddCardsAndSort(int count)
         {
             var cards = Card.Generate(count).ToArray();
             if (cards.Any(card => card is ISpecialCard))

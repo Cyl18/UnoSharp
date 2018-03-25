@@ -106,7 +106,7 @@ namespace UnoSharp.GameComponent
                 }
                 else if (px < 0)
                 {
-                    player.AddCardsAndSort((ulong) -px);
+                    player.AddCardsAndSort(-px);
                 }
             }
         }

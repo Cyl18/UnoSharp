@@ -17,7 +17,6 @@ namespace UnoSharp
         }
 
         public Dictionary<string, string> Nicks { get; } = new Dictionary<string, string>();
-        public ulong DrawCount = 20;
 
         private Dictionary<string, List<string>> Commands { get; set; }
 
