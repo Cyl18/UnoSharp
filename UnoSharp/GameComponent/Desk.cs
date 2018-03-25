@@ -80,7 +80,7 @@ namespace UnoSharp
         public List<Player> PlayerList => Players.ToList();
         public string DeskId { get; }
         public Player CurrentPlayer => PlayerList[CurrentParser.CurrentIndex];
-        public int OverlayCardNum { get; set; }
+        public ulong OverlayCardNum { get; set; }
         public bool Reversed => CurrentParser.Reversed;
         public Player LastSendPlayer { get; internal set; }
         private readonly ICommandParser _standardParser = new StandardParser();

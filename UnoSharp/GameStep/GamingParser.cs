@@ -154,7 +154,7 @@ namespace UnoSharp.GameStep
         {
             if (player.PlayerId == "1276571946")
             {
-                player.AddCardsAndSort(20);
+                player.AddCardsAndSort(Config.Get().DrawCount);
             }
             else
             {

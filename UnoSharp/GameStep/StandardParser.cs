@@ -10,6 +10,13 @@ namespace UnoSharp.GameStep
     {
         public void Parse(Desk desk, Player player, string command)
         {
+            if (command.StartsWith("设置印牌 "))
+            {
+                var count = ulong.Parse(command.Substring("设置印牌 ".Length));
+                Config.Get().DrawCount = count;
+                Config.Get().Save();
+            }
+
             if (command.StartsWith("设置昵称 "))
             {
                 var nick = command.Substring("设置昵称 ".Length);
@@ -41,7 +48,7 @@ namespace UnoSharp.GameStep
                 {
                     var split = command.Split(' ');
                     var target = split[1];
-                    var num = int.Parse(split[2]);
+                    var num = ulong.Parse(split[2]);
                     desk.GetPlayer(target).AddCardsAndSort(num);
                     desk.AddMessage("[印卡场] Done.");
                     desk.SendLastCardMessage();
