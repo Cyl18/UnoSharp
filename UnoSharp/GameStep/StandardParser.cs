@@ -35,14 +35,22 @@ namespace UnoSharp.GameStep
                     break;
             }
 
-            if (Config.IdAdmin(player.PlayerId))
+            if (Config.IsAdmin(player.PlayerId))
             {
                 if (command.StartsWith("印卡"))
                 {
                     var split = command.Split(' ');
                     var target = split[1];
                     var num = int.Parse(split[2]);
-                    desk.GetPlayer(target).AddCardsAndSort(num);
+                    desk.AddMessage("[印卡场] 快速印卡正在执行...");
+                    if (num > 200)
+                    {
+                        desk.GetPlayer(target).FastCreateCards(num);
+                    }
+                    else
+                    {
+                        desk.GetPlayer(target).AddCardsAndSort(num);
+                    }
                     desk.AddMessage("[印卡场] Done.");
                     desk.SendLastCardMessage();
                 }

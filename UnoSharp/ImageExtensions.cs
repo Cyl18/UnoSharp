@@ -13,17 +13,16 @@ namespace UnoSharp
 {
     public static class ImageExtensions
     {
-        
-
         public static Image ToImage(this ICollection<Card> cards)
         {
             if (cards.Count == 0) return new Bitmap(1, 1);
             if (cards.Count == 1) return cards.First().ToImage();
             var cardlist = cards.ToArray();
-            var images = cards.Select(card => card.ToImage()).ToList();
+            var count = Math.Min(50, cards.Count);
+            var images = (cards.Count > 50 ? cards.Take(50) : cards).Select(card => card.ToImage()).ToList();
             var first = images.First();
-            var eachWidth = (int) (first.Width / 5.0 * 2.0);
-            var width = first.Width + eachWidth * (cards.Count - 1);
+            var eachWidth = (int)(first.Width / 5.0 * 2.0);
+            var width = first.Width + eachWidth * (count - 1);
             var height = first.Height;
 
             var bitmap = new Bitmap(width, height + 55);
@@ -31,10 +30,10 @@ namespace UnoSharp
             using (result)
             {
                 var point = new Point(0, 0);
-                var textpoint = new Point(first.Width/2-80, height + 5);
+                var textpoint = new Point(first.Width / 2 - 80, height + 5);
                 var font = new Font("Microsoft YaHei", 32);
 
-                for (var index = 0; index < images.Count; index++)
+                for (var index = 0; index < count; index++)
                 {
                     var image = images[index];
                     var card = cardlist[index];
@@ -44,10 +43,11 @@ namespace UnoSharp
                     point.X += eachWidth;
                     textpoint.X += eachWidth;
                 }
-            
+
                 return bitmap;
             }
         }
+
         //private static readonly Random Rng = new Random("Chtholly Nota Seniorious".GetHashCode());
         public static string ToImageCodeAndDispose(this Image image, bool forceOverwrite = false)
         {
@@ -64,14 +64,16 @@ namespace UnoSharp
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage)) {
+            using (var graphics = Graphics.FromImage(destImage))
+            {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes()) {
+                using (var wrapMode = new ImageAttributes())
+                {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
@@ -81,6 +83,7 @@ namespace UnoSharp
         }
 
         public const string ImagePath = "data\\image";
+
         private static string SaveToData(this Bitmap image, bool overwrite)
         {
             byte[] bytes;

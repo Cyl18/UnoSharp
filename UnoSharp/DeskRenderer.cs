@@ -72,7 +72,7 @@ namespace UnoSharp
                 if (player.PublicCard)
                     return player.Cards.ToImage();
                 else
-                    return RenderBlankCards(player.Cards.Count, player.Cards.Count(card => card is ISpecialCard));
+                    return RenderBlankCards(Math.Min(player.Cards.Count, 50), Math.Min(player.Cards.Count(card => card is ISpecialCard), 50));
             });
             var enumerable = blankCards.ToArray();
             var nicks = players.Select(player => player.Nick);
@@ -97,7 +97,8 @@ namespace UnoSharp
             // main image
             var eachHeight = Math.Max(GetEachLength(baseHeight), 100); // prevent zero
             var height = GetLength(baseHeight, eachHeight, players.Count);
-            var width = beforeRenderBlankCardWidth + maxWidth;
+            var countWidth = margin + TextRenderer.MeasureText("233", font).Width + margin;
+            var width = beforeRenderBlankCardWidth + maxWidth + countWidth;
 
             var bitmap = new Bitmap(width, height);
             var grap = Graphics.FromImage(bitmap);
@@ -109,6 +110,7 @@ namespace UnoSharp
                     var player = players[index];
 
                     grap.RenderImageWithShadow(blankCard, blankCardPoint, 5, Opacity);
+                    TextRenderer.DrawText(grap, player.Cards.Count.ToString(), font, new Point(width - countWidth + margin, textPoint.Y), Color.Aqua);
                     textPoint.X = margin + textCenterWidth - TextRenderer.MeasureText(player.Nick, font).Width / 2;
                     TextRenderer.DrawText(grap, player.Nick, font, textPoint, player.Uno ? Color.Red : (player.AutoSubmitCard ? Color.BlueViolet : Color.Gray));
                     if (player.IsCurrentPlayer())
@@ -135,7 +137,7 @@ namespace UnoSharp
                                 DrawArraw(grap, new Point(textCenter, textPoint.Y - 20), new Point(textCenter, textPoint.Y - 20 - 50));
                         }
                         else
-                        { //TODO bug
+                        {
                             if (index == enumerable.Length - 1)
                             {
                                 var pen = new Pen(Color.Cyan, 15);

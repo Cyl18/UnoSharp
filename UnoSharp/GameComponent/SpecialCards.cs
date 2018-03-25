@@ -101,13 +101,13 @@ namespace UnoSharp.GameComponent
                     for (var i = 0; i < px; i++)
                     {
                         player.Cards.Remove(player.Cards.PickOne());
-                        player.SendCardsMessage();
                     }
                 }
                 else if (px < 0)
                 {
                     player.AddCardsAndSort(-px);
                 }
+                player.SendCardsMessage();
             }
         }
     }

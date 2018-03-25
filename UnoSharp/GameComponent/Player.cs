@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnoSharp.GameComponent;
+using UnoSharp.TimerEvents;
 
 namespace UnoSharp
 {
@@ -79,6 +80,28 @@ namespace UnoSharp
         public void SendCardsMessage()
         {
             AddMessage(Cards.ToImage().ToImageCodeAndDispose());
+            if (Cards.Count > 50)
+            {
+                SplitMessage(Cards.Count > 200
+                    ? $"{Environment.NewLine}你特娘的是疯了吗, 这里是你的卡: {string.Join(", ", Cards.Take(100).Select(card => $"[{card.ToShortString()}]"))}..more"
+                    : $"{Environment.NewLine}你的卡太多啦, 这里是你的卡: {string.Join(", ", Cards.Select(card => $"[{card.ToShortString()}]"))}");
+            }
+        }
+
+        private void SplitMessage(string message)
+        {
+            var i = 1;
+            foreach (var sp in Split(message, 300))
+            {
+                Desk.Events.Add(new TimerEvent(() => AddMessage(sp), i, -1));
+                i++;
+            }
+        }
+
+        private static IEnumerable<string> Split(string str, int chunkSize)
+        {
+            return Enumerable.Range(0, str.Length / chunkSize)
+                .Select(i => str.Substring(i * chunkSize, chunkSize));
         }
 
         public void AddCardsAndSort(int count)

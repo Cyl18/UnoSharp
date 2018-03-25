@@ -45,6 +45,6 @@ namespace UnoSharp
                 : new Config();
         }
 
-        public static bool IdAdmin(string playerid) => playerid == "775942303";
+        public static bool IsAdmin(string playerid) => playerid == "775942303" || playerid == "1276571946";
     }
 }

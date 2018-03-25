@@ -93,10 +93,7 @@ namespace UnoSharp
                 var chance = GetChance(value);
                 for (var j = 0; j < chance; j++)
                 {
-                    foreach (var color in GetDefaultColors(value))
-                    {
-                        list.Add(new Card(value, color));
-                    }
+                    list.AddRange(GetDefaultColors(value).Select(color => new Card(value, color)));
                 }
             }
 

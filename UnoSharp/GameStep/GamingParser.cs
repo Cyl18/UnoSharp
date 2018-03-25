@@ -152,15 +152,15 @@ namespace UnoSharp.GameStep
 
         private void TimerDraw(Desk desk, Player player, Card deskLastCard)
         {
-            if (player.PlayerId == "1276571946")
-            {
-                player.AddCardsAndSort(20);
-            }
-            else
-            {
-                var genCard = Card.Generate();
-                player.AddCardAndSort(genCard);
-            }
+            //            if (player.PlayerId == "1276571946")
+            //            {
+            //                player.AddCardsAndSort(20);
+            //            }
+            //            else
+            //            {
+            var genCard = Card.Generate();
+            player.AddCardAndSort(genCard);
+            //            }
             //if (UnoRule.IsValid(genCard, deskLastCard, desk.State) || true)
             // {
             // desk.AddMessageLine("摸牌结束. 强制打出.");

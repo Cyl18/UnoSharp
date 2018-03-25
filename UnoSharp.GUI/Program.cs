@@ -58,15 +58,17 @@ namespace UnoSharp.GUI
                     Console.WriteLine(msg);
                 }
             };
-            //timer.Start();
+            timer.Start();
             //nd.CurrentParser.Reversed = true;
             //nd.CurrentParser.CurrentIndex = 0;
             nd.CurrentPlayer.AddCardsAndSort(1000);
-            Thread.Sleep(1000);
-            for (int i = 0; i < 4; i++)
+            Thread.Sleep(10000);
+            for (int i = 0; i < 1; i++)
             {
-                nd.RenderDesk();
+                nd.RenderDesk().Save("GG.png");
             }
+            Thread.Sleep(1000000);
+
             // nd.RenderDesk();
             //  nd.RenderDesk();
             //   nd.RenderDesk();
