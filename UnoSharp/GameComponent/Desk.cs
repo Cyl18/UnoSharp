@@ -74,7 +74,7 @@ namespace UnoSharp
             }
         }
 
-        private static readonly Dictionary<string, Desk> Desks = new Dictionary<string, Desk>();
+        private static Dictionary<string, Desk> Desks { get; } = new Dictionary<string, Desk>();
 
         public IEnumerable<Player> Players => _playersDictionary.Values;
         public List<Player> PlayerList => Players.ToList();
@@ -148,14 +148,19 @@ namespace UnoSharp
             }
         }
 
+        private static readonly object _locker2 = new object();
+
         public static Desk GetOrCreateDesk(string deskid)
         {
-            if (Desks.ContainsKey(deskid))
-                return Desks[deskid];
+            lock (_locker2)
+            {
+                if (Desks.ContainsKey(deskid))
+                    return Desks[deskid];
 
-            var desk = new Desk(deskid);
-            Desks.Add(deskid, desk);
-            return desk;
+                var desk = new Desk(deskid);
+                Desks.Add(deskid, desk);
+                return desk;
+            }
         }
 
         public static List<Desk> GetDesks()

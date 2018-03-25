@@ -53,6 +53,7 @@ namespace UnoSharp.GameStep
                     }
                     desk.AddMessage("[印卡场] Done.");
                     desk.SendLastCardMessage();
+                    GC.Collect();
                 }
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,20 +16,18 @@ namespace UnoSharp
             var cards = new ConcurrentBag<Card>(player.Cards);
             ThreadPool.SetMinThreads(16, 16);
             ThreadPool.SetMaxThreads(64, 64);
-            Parallel.ForEach(GenCards(count), new ParallelOptions { MaxDegreeOfParallelism = 64 }, card =>
+            Parallel.For((long)0, count, new ParallelOptions { MaxDegreeOfParallelism = 64 }, (i) =>
             {
-                cards.Add(card);
+                cards.Add(GenCards());
             });
-            player.Cards = new List<Card>(cards);
+            player.Cards = cards.ToList();
             player.SendCardsMessage();
         }
 
-        private static IEnumerable<Card> GenCards(int num)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Card GenCards()
         {
-            for (var i = 0; i < num; i++)
-            {
-                yield return Card.CardsPool.PickOne();
-            }
+            return Card.CardsPool.PickOne();
         }
     }
 }
